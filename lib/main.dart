@@ -1,3 +1,4 @@
+import 'package:come_together2/components/come_together_themes.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/first_page.dart';
@@ -12,11 +13,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      title: 'Come Tegether',
+      theme: CometogetherTheme.darkTheme,
       home: const FirstPage(),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        child: child!,
+      ),
     );
   }
 }
