@@ -1,126 +1,73 @@
 import 'package:flutter/material.dart';
 
-class LoginForm extends StatefulWidget {
-  const LoginForm({super.key});
+class FadePageRoute extends PageRouteBuilder {
+  final Widget page;
 
-  @override
-  State<LoginForm> createState() => _LoginFormState();
+  FadePageRoute({required this.page})
+      : super(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
 }
 
-class _LoginFormState extends State<LoginForm> {
-  final TextEditingController _idTextController = TextEditingController();
-  final TextEditingController _pwTextController = TextEditingController();
-  final _form_key = GlobalKey<FormState>();
-  String user_id = '';
-  String user_password = '';
+class UserInfoInputForm extends StatefulWidget {
+  UserInfoInputForm({
+    super.key,
+    required this.columText,
+    this.obscureText,
+    required this.validatorText,
+    required this.textHint,
+    required this.dataValue,
+    required this.keyIndex,
+    this.minLength,
+  });
 
-  void _tryValidation() {
-    final isValid = _form_key.currentState!.validate();
-    if (isValid) {
-      _form_key.currentState!.save();
-    }
-  }
+  String columText;
+  String validatorText;
+  String textHint;
+  bool? obscureText;
+  int keyIndex;
+  int? minLength;
+
+  final ValueSetter<String> dataValue;
 
   @override
-  void dispose() {
-    super.dispose();
-    _idTextController.dispose();
-    _pwTextController.dispose();
-  }
+  State<UserInfoInputForm> createState() => _UserInfoInputFormState();
+}
 
+class _UserInfoInputFormState extends State<UserInfoInputForm> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width - 50,
-      height: 320,
-      padding: const EdgeInsets.all(30.0),
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 5,
-          color: const Color.fromARGB(117, 0, 0, 0),
+    return Row(
+      children: [
+        Text(
+          widget.columText,
+          style: const TextStyle(fontSize: 20),
         ),
-        borderRadius: const BorderRadius.all(Radius.circular(5.0) // POINT
+        Expanded(
+          child: TextFormField(
+            key: ValueKey(widget.keyIndex),
+            obscureText: widget.obscureText ?? false,
+            maxLength: 20,
+            validator: (value) {
+              if (value!.isEmpty || value.length < (widget.minLength ?? 1)) {
+                return widget.validatorText;
+              }
+              return null;
+            },
+            onSaved: (value) {
+              widget.dataValue(value!);
+            },
+            decoration: InputDecoration(
+              hintText: widget.textHint,
             ),
-      ),
-      child: GestureDetector(
-        //onTap: FocusScope.of(context).unfocus(),
-        child: Form(
-          key: _form_key,
-          child: Column(children: [
-            Row(
-              children: [
-                const Text(
-                  'ID   :  ',
-                  style: TextStyle(fontSize: 20),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    key: const ValueKey(1),
-                    validator: (value) {
-                      if (value!.isEmpty || value.length < 4) {
-                        return '4글자 이상 입력해주세요!!';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      user_id = value!;
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'ID를 입력하세요',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(children: [
-              const Text(
-                'PW : ',
-                style: TextStyle(fontSize: 20),
-              ),
-              Expanded(
-                child: TextFormField(
-                  key: const ValueKey(2),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value!.isEmpty || value.length < 4) {
-                      return '4글자 이상 입력해주세요!!';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    user_password = value!;
-                  },
-                  controller: _pwTextController,
-                  decoration: const InputDecoration(
-                    hintText: 'PW를 입력하세요',
-                  ),
-                ),
-              ),
-            ]),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              OutlinedButton(
-                child: const Text(
-                  '회원가입',
-                  style: TextStyle(color: Colors.black),
-                ),
-                onPressed: () {},
-              ),
-              OutlinedButton(
-                child: const Text('로그인', style: TextStyle(color: Colors.black)),
-                onPressed: () {
-                  _tryValidation();
-                },
-              ),
-            ]),
-          ]),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
