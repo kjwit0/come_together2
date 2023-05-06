@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../components/come_together_general.dart';
-import '../chat/chat_list.dart';
+import '../chat/room/chat_room_list.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

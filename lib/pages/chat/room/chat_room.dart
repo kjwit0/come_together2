@@ -1,9 +1,9 @@
-import 'package:come_together2/pages/chat/message_send.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'message_list.dart';
+import '../message/message_list.dart';
+import '../message/message_send.dart';
 
 class ChatRoom extends StatefulWidget {
   const ChatRoom({super.key});

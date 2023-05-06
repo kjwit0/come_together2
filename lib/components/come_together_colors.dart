@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CometogetherColors {
   static const int _primaryColorValue = 0x6FC749;
-  static const primaryColor = Color(_primaryColorValue);
+  static const primaryColor = Color.fromARGB(191, 111, 199, 73);
   static const textPrimaryColor = Colors.white54;
 
   static const MaterialColor primaryMaterialColor =

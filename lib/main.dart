@@ -1,10 +1,10 @@
 import 'package:come_together2/components/come_together_themes.dart';
-import 'package:come_together2/pages/chat/chat_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 
+import 'pages/chat/room/chat_room_list.dart';
 import 'pages/first_page.dart';
 
 void main() async {
