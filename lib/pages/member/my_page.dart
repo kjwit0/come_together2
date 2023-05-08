@@ -5,19 +5,19 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../components/come_together_colors.dart';
+import '../../modul/member.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
-
   @override
   State<MyPage> createState() => _MyPageState();
 }
 
 class _MyPageState extends State<MyPage> {
-  String _nickname = '';
   String _newNickname = '';
   final _authentication = FirebaseAuth.instance;
-  User? loginUser;
+  final memberInfo = FirebaseFirestore.instance.collection('member');
+  late Member loginUser;
   bool _isChanged = false;
 
   @override
@@ -26,12 +26,20 @@ class _MyPageState extends State<MyPage> {
     getCurrentUser();
   }
 
-  void getCurrentUser() {
+  void getCurrentUser() async {
     try {
       final user = _authentication.currentUser;
       if (user != null) {
-        loginUser = user;
-        _nickname = user.displayName ?? '';
+        loginUser = Member(
+          memberId: user.uid,
+          memberEmail: user.email ?? 'none',
+          memberNickname: user.displayName ?? 'unknown',
+        );
+        loginUser.memberIcon = await FirebaseStorage.instance
+            .ref()
+            .child('userIcon')
+            .child('${user.uid}.png')
+            .getDownloadURL();
       }
     } catch (e) {
       print(e);
@@ -56,9 +64,8 @@ class _MyPageState extends State<MyPage> {
       final userIcons = FirebaseStorage.instance
           .ref()
           .child('userIcon')
-          .child(loginUser!.uid + '.png');
+          .child('${loginUser.memberId}.png');
       _isChanged = true;
-
       await userIcons.putFile(pickedImage!);
     }
   }
@@ -71,10 +78,7 @@ class _MyPageState extends State<MyPage> {
           duration: Duration(seconds: 1),
         ));
       } else {
-        await FirebaseFirestore.instance
-            .collection('member')
-            .doc(loginUser!.uid)
-            .set({'nickname': _newNickname});
+        _authentication.currentUser?.updateDisplayName(_newNickname);
         _isChanged = true;
       }
     }
@@ -107,9 +111,7 @@ class _MyPageState extends State<MyPage> {
                           child: CircleAvatar(
                             radius: 40,
                             backgroundColor: Colors.black87,
-                            backgroundImage: pickedImage != null
-                                ? FileImage(pickedImage!)
-                                : null,
+                            backgroundImage: null,
                           ),
                         ),
                         ElevatedButton(
@@ -120,10 +122,10 @@ class _MyPageState extends State<MyPage> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Text('ID :  ${loginUser!.email}',
+                    Text('ID :  ${loginUser.memberEmail}',
                         style: const TextStyle(fontSize: 20)),
                     const SizedBox(height: 20),
-                    Text('Nickname :  $_nickname',
+                    Text('Nickname :  ${loginUser.memberNickname}',
                         style: const TextStyle(fontSize: 20)),
                     const SizedBox(height: 10),
                     Row(

@@ -2,9 +2,9 @@
     package="com.example.come_together2">
      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
-        android:label="come_together2"
+        android:label="ComeTogether"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/come_together">
         <activity
             android:name=".MainActivity"
             android:exported="true"

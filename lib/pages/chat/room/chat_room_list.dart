@@ -1,19 +1,21 @@
-import 'package:come_together2/pages/member/my_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'chat_room.dart';
+import 'chat_room_add.dart';
 
-class ChatList extends StatefulWidget {
-  const ChatList({super.key});
+class ChatRoomList extends StatefulWidget {
+  const ChatRoomList({super.key});
 
   @override
-  State<ChatList> createState() => _ChatListState();
+  State<ChatRoomList> createState() => _ChatRoomListState();
 }
 
-class _ChatListState extends State<ChatList> {
+class _ChatRoomListState extends State<ChatRoomList> {
   final _authentication = FirebaseAuth.instance;
   User? loginUser;
+  String? loginUserIcon;
   List<int> _chatRoomList = [];
 
   @override
@@ -22,7 +24,7 @@ class _ChatListState extends State<ChatList> {
     getCurrentUser();
   }
 
-  void getCurrentUser() {
+  void getCurrentUser() async {
     try {
       final user = _authentication.currentUser;
       if (user != null) {
@@ -31,34 +33,18 @@ class _ChatListState extends State<ChatList> {
     } catch (e) {
       print(e);
     }
+    final userIcon = await FirebaseStorage.instance
+        .ref()
+        .child('userIcon')
+        .child(loginUser!.uid + '.png')
+        .getDownloadURL();
+    loginUserIcon = userIcon;
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'COME TOGETHER',
-            style: TextStyle(
-              color: Colors.green[300],
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.account_circle,
-                color: Colors.blue,
-                size: 30.0,
-              ),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const MyPage();
-                }));
-              },
-            )
-          ],
-        ),
         body: Stack(
           children: [
             Positioned(
@@ -74,7 +60,7 @@ class _ChatListState extends State<ChatList> {
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return _chatRoomList.isEmpty
-                        ? const MyPage()
+                        ? const ChatRoomAdd()
                         : const ChatRoom();
                   }));
                 },

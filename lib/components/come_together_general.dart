@@ -24,6 +24,7 @@ class UserInfoInputForm extends StatefulWidget {
     required this.dataValue,
     required this.keyIndex,
     this.minLength,
+    this.maxLength,
   });
 
   String columText;
@@ -32,6 +33,7 @@ class UserInfoInputForm extends StatefulWidget {
   bool? obscureText;
   int keyIndex;
   int? minLength;
+  int? maxLength;
 
   final ValueSetter<String> dataValue;
 
@@ -52,7 +54,7 @@ class _UserInfoInputFormState extends State<UserInfoInputForm> {
           child: TextFormField(
             key: ValueKey(widget.keyIndex),
             obscureText: widget.obscureText ?? false,
-            maxLength: 20,
+            maxLength: widget.maxLength ?? 20,
             validator: (value) {
               if (value!.isEmpty || value.length < (widget.minLength ?? 1)) {
                 return widget.validatorText;
