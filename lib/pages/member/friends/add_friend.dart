@@ -1,4 +1,5 @@
 import 'package:come_together2/modul/friend_info.dart';
+import 'package:come_together2/pages/member/member_box.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 
@@ -21,35 +22,39 @@ class _AddFriendState extends State<AddFriend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Column(
         children: [
-          MaterialButton(
-            onPressed: () {
-              friends.add(FriendInfo(
-                  memberId: 'memberId',
-                  memberNickname: 'memberNickname',
-                  memberIcon: 'memberIcon'));
-            },
+          Expanded(
+            child: ListView.builder(
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: EdgeInsets.all(10),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [Text('friend name'), Text('상태메시지')],
+                              ),
+                              Text('icon')
+                            ],
+                          ),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: Text('대화하기'),
+                          ),
+                        ]),
+                  ),
+                );
+              },
+            ),
           ),
-          const Divider(),
-          ValueListenableBuilder(
-              valueListenable:
-                  Hive.box<FriendInfo>('friendInfoBox').listenable(),
-              builder: (context, Box<FriendInfo> friends, widget) {
-                return Expanded(
-                    child: true
-                        ? const Text('empty')
-                        : ListView.builder(
-                            itemCount: 5,
-                            itemBuilder: (context, i) {
-                              //friends.delete(friends.keys);
-                              return ListTile(
-                                title: Text('$i'),
-                                subtitle: Text('$i sub'),
-                              );
-                            }));
-              })
         ],
       ),
     );

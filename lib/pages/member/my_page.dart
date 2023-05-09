@@ -7,46 +7,30 @@ import 'package:image_picker/image_picker.dart';
 import '../../components/come_together_colors.dart';
 import '../../modul/member.dart';
 
+// ignore: must_be_immutable
 class MyPage extends StatefulWidget {
-  const MyPage({super.key});
+  MyPage({required this.loginUser, super.key});
+  Member loginUser;
   @override
   State<MyPage> createState() => _MyPageState();
 }
 
 class _MyPageState extends State<MyPage> {
   String _newNickname = '';
-  final _authentication = FirebaseAuth.instance;
-  final memberInfo = FirebaseFirestore.instance.collection('member');
-  late Member loginUser;
   bool _isChanged = false;
+  File? pickedImage;
+  late Member _loginUser;
+  late DocumentReference<Map<String, dynamic>> userCollection;
+  final TextEditingController _nicknameComtroller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    getCurrentUser();
+    _loginUser = widget.loginUser;
+    userCollection = FirebaseFirestore.instance
+        .collection("member")
+        .doc(_loginUser.memberId);
   }
-
-  void getCurrentUser() async {
-    try {
-      final user = _authentication.currentUser;
-      if (user != null) {
-        loginUser = Member(
-          memberId: user.uid,
-          memberEmail: user.email ?? 'none',
-          memberNickname: user.displayName ?? 'unknown',
-        );
-        loginUser.memberIcon = await FirebaseStorage.instance
-            .ref()
-            .child('userIcon')
-            .child('${user.uid}.png')
-            .getDownloadURL();
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  File? pickedImage;
 
   void _pickImage() async {
     final imagePicker = ImagePicker();
@@ -61,12 +45,14 @@ class _MyPageState extends State<MyPage> {
 
   void _doChangeImage() async {
     if (pickedImage != null) {
-      final userIcons = FirebaseStorage.instance
+      var userIcons = FirebaseStorage.instance
           .ref()
           .child('userIcon')
-          .child('${loginUser.memberId}.png');
+          .child('${widget.loginUser.memberId}.png');
       _isChanged = true;
+
       await userIcons.putFile(pickedImage!);
+      _loginUser.memberIcon = await userIcons.getDownloadURL();
     }
   }
 
@@ -78,8 +64,15 @@ class _MyPageState extends State<MyPage> {
           duration: Duration(seconds: 1),
         ));
       } else {
-        _authentication.currentUser?.updateDisplayName(_newNickname);
-        _isChanged = true;
+        if (_loginUser.memberNickname == _newNickname) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('동일한 닉네임 입니다.'),
+            duration: Duration(seconds: 1),
+          ));
+        } else {
+          _nicknameComtroller.clear();
+          _isChanged = true;
+        }
       }
     }
   }
@@ -122,10 +115,10 @@ class _MyPageState extends State<MyPage> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Text('ID :  ${loginUser.memberEmail}',
+                    Text('ID :  ${_loginUser.memberEmail}',
                         style: const TextStyle(fontSize: 20)),
                     const SizedBox(height: 20),
-                    Text('Nickname :  ${loginUser.memberNickname}',
+                    Text('Nickname :  ${_loginUser.memberNickname}',
                         style: const TextStyle(fontSize: 20)),
                     const SizedBox(height: 10),
                     Row(
@@ -135,6 +128,7 @@ class _MyPageState extends State<MyPage> {
                         Expanded(
                           child: TextFormField(
                             maxLength: 15,
+                            controller: _nicknameComtroller,
                             decoration: const InputDecoration(
                               hintText: '  새로운 닉네임을 입력하세요',
                             ),
@@ -149,7 +143,7 @@ class _MyPageState extends State<MyPage> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          _authentication.signOut();
+                          FirebaseAuth.instance.signOut();
                           Navigator.pop(context);
                         },
                         style: ButtonStyle(
@@ -182,12 +176,18 @@ class _MyPageState extends State<MyPage> {
                         onPressed: () {
                           _doChangeImage();
                           _doChangeNickname();
+
+                          if (_isChanged) {
+                            userCollection.set(_loginUser.toJson());
+                          }
+
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: _isChanged
                                 ? const Text('수정 되었습니다.')
                                 : const Text('변경된 내용이 없습니다.'),
                             duration: const Duration(seconds: 1),
                           ));
+                          setState(() {});
                         },
                       ),
                     ),

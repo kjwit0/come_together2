@@ -1,33 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:come_together2/modul/member.dart';
 import 'package:come_together2/pages/chat/room/chat_room_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'member/friends/member_list.dart';
+import 'package:get/get.dart';
+import '../controller/user_controller.dart';
+import 'member/friends/friend_list.dart';
 import 'member/my_page.dart';
 
-class LoginMain extends StatefulWidget {
-  const LoginMain({super.key});
+class LoginMain extends StatelessWidget {
+  LoginMain({super.key});
 
-  @override
-  State<LoginMain> createState() => _LoginMainState();
-}
-
-class _LoginMainState extends State<LoginMain> {
   final _authentication = FirebaseAuth.instance;
   late Member loginUser;
   int _currentPage = 1;
-
-  final pages = [
-    const MemberList(),
-    const ChatRoomList(),
-    const MemberList(),
-  ];
+  late List<Widget> pages;
 
   @override
   void initState() {
-    super.initState();
     getCurrentUser();
+
+    pages = [
+      FriendList(),
+      const ChatRoomList(),
+      FriendList(),
+    ];
   }
 
 //user login
@@ -35,16 +32,22 @@ class _LoginMainState extends State<LoginMain> {
     try {
       final user = _authentication.currentUser;
       if (user != null) {
-        loginUser = Member(
-          memberId: user.uid,
-          memberEmail: user.email ?? 'none',
-          memberNickname: user.displayName ?? 'unknown',
-        );
-        loginUser.memberIcon = await FirebaseStorage.instance
-            .ref()
-            .child('userIcon')
-            .child('${user.uid}.png')
-            .getDownloadURL();
+        var memberCollection = FirebaseFirestore.instance.collection("member");
+        var userInfo = await memberCollection
+            .doc(user.uid)
+            .get(); //받아오는 방식이므로 await필요(아래거 실행늦게 하게 하려면)
+        if (userInfo.exists) {
+          //존재성 확인하는 부분.
+          Get.put(UserController());
+        } else {
+          memberCollection.doc(user.uid).set({
+            'memberId': user.uid,
+            'memberEmail': user.email,
+            'nickname': user.displayName,
+            'userIcon': 'none',
+            'friends': null
+          });
+        }
       }
     } catch (e) {
       // ignore: avoid_print
@@ -78,7 +81,7 @@ class _LoginMainState extends State<LoginMain> {
               child: MaterialButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const MyPage();
+                    return MyPage(loginUser: loginUser);
                   }));
                 },
               ),
@@ -111,4 +114,54 @@ class _LoginMainState extends State<LoginMain> {
       ),
     );
   }
+
+  //   final _authentication = FirebaseAuth.instance;
+//   late Member loginUser;
+//   int _currentPage = 1;
+//   late List<Widget> pages;
+
+//   @override
+//   void initState() {
+//     getCurrentUser();
+
+//     pages = [
+//       FriendList(),
+//       const ChatRoomList(),
+//       FriendList(),
+//     ];
+//   }
+
+// //user login
+//   void getCurrentUser() async {
+//     try {
+//       final user = _authentication.currentUser;
+//       if (user != null) {
+//         var memberCollection = FirebaseFirestore.instance.collection("member");
+//         var userInfo = await memberCollection
+//             .doc(user.uid)
+//             .get(); //받아오는 방식이므로 await필요(아래거 실행늦게 하게 하려면)
+//         if (userInfo.exists) {
+//           //존재성 확인하는 부분.
+//           Get.put(UserController());
+//         } else {
+//           memberCollection.doc(user.uid).set({
+//             'memberId': user.uid,
+//             'memberEmail': user.email,
+//             'nickname': user.displayName,
+//             'userIcon': 'none',
+//             'friends': null
+//           });
+//         }
+//       }
+//     } catch (e) {
+//       // ignore: avoid_print
+//       print(e);
+//     }
+//   }
+
+//   void setPage(int pageNum) {
+//     setState(() {
+//       _currentPage = pageNum;
+//     });
+//   }
 }
