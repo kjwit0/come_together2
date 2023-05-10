@@ -1,34 +1,60 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import '../modul/friend_info.dart';
 import '../modul/member.dart';
 
 class UserController extends GetxController {
-  //static UserController instance = Get.find();
   final loginUser = Member().obs;
-
-  // void updateInfo(Member member) {
-  //   loginUser.update((val) {
-  //     val?.memberEmail = member.memberEmail;
-  //     val?.memberId = member.memberId;
-  //     val?.memberNickname = member.memberNickname;
-  //     val?.memberIcon = member.memberIcon;
-  //     val?.friends = member.friends;
-  //   });
-  // }
+  var user = FirebaseAuth.instance.currentUser;
 
   @override
   void onInit() {
     super.onInit();
-    fetchData();
+    _fetchData();
   }
 
-  void fetchData() async {
-    var userInfo = await FirebaseFirestore.instance
-        .collection("member")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+  void _fetchData() async {
+    if (user != null) {
+      var memberCollection = FirebaseFirestore.instance.collection("member");
+      var userInfo = await memberCollection.doc(user!.uid).get();
 
-    loginUser.value = Member.fromJson(userInfo.data()!);
+      if (userInfo.exists) {
+        loginUser.value = Member.fromJson(userInfo.data()!);
+      } else {
+        memberCollection.doc(user!.uid).set({
+          'memberId': user!.uid,
+          'memberEmail': user!.email,
+          'nickname': user!.displayName,
+          'userIcon': 'none',
+          'friends': null
+        });
+
+        loginUser.value.memberId = user!.uid;
+        loginUser.value.memberEmail = user!.email!;
+        loginUser.value.memberIcon = 'none';
+        loginUser.value.friends = null;
+      }
+    }
+  }
+
+  void addFriend(FriendInfo friend) {
+    if (loginUser.value.friends == null) {
+      List<FriendInfo> list = [];
+      list.add(friend);
+      loginUser.value.friends = list;
+    } else {
+      loginUser.value.friends!.add(friend);
+    }
+    updateFriends();
+  }
+
+  void updateFriends() async {
+    if (user != null) {
+      FirebaseFirestore.instance
+          .collection('member')
+          .doc(user!.uid)
+          .set(loginUser.value.toJson());
+    }
   }
 }

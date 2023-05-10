@@ -27,17 +27,13 @@ class _MyWidgetState extends State<ChatRoomAdd> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('모집글 등록')),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(30.0),
           child: Form(
             key: _addRoomKey,
             child: ListView(children: [
-              const Text(
-                '모집글 등록',
-                style: TextStyle(fontSize: 30),
-              ),
               const SizedBox(height: 20),
               UserInfoInputForm(
                   keyIndex: 1,

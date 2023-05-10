@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'friend_info.dart';
 
@@ -18,16 +20,27 @@ class Member extends GetxController {
       : memberId = json['memberId'],
         memberEmail = json['memberEmail'],
         memberNickname = json['nickname'],
-        memberIcon = json['userIcon'],
-        friends = json['friends'];
+        memberIcon = json['userIcon'] {
+    String? jsonString = json['friends'];
+    if (jsonString != null) {
+      List<FriendInfo> loadedFriends = [];
+      for (var data in jsonDecode(jsonString)) {
+        loadedFriends.add(FriendInfo.fromJson(data));
+      }
+      friends = loadedFriends;
+    } else {
+      friends = null;
+    }
+  }
 
   Map<String, dynamic> toJson() => {
         'memberId': memberId,
         'memberEmail': memberEmail,
-        'memberNickname': memberNickname,
+        'nickname': memberNickname,
         'userIcon': memberIcon,
-        'friends': friends
+        'friends': jsonEncode(friends)
       };
+
   void updateModule() {
     update();
   }

@@ -17,4 +17,14 @@ class FriendInfo extends HiveObject {
 
   @HiveField(2)
   String memberIcon;
+  FriendInfo.fromJson(Map<String, dynamic> json)
+      : memberId = json['memberId'],
+        memberNickname = json['nickname'],
+        memberIcon = json['userIcon'];
+
+  Map<String, dynamic> toJson() => {
+        'memberId': memberId,
+        'nickname': memberNickname,
+        'userIcon': memberIcon
+      };
 }

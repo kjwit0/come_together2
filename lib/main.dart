@@ -1,9 +1,7 @@
 import 'package:come_together2/components/come_together_themes.dart';
 import 'package:come_together2/controller/auth_controller.dart';
+import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/modul/friend_info.dart';
-import 'package:come_together2/modul/member.dart';
-import 'package:come_together2/pages/login_main_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,20 +31,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final memberContoller = Get.put(Member(
-        memberEmail: '', memberId: '', memberNickname: '', memberIcon: ''));
     return GetMaterialApp(
       title: 'Come Tegether',
       theme: CometogetherTheme.darkTheme,
-      home: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            return const LoginMain();
-          }
-          return const FirstPage();
-        }),
-      ),
+      home: const FirstPage(),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: child!,

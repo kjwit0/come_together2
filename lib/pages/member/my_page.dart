@@ -9,8 +9,7 @@ import '../../modul/member.dart';
 
 // ignore: must_be_immutable
 class MyPage extends StatefulWidget {
-  MyPage({required this.loginUser, super.key});
-  Member loginUser;
+  const MyPage({super.key});
   @override
   State<MyPage> createState() => _MyPageState();
 }
@@ -26,7 +25,7 @@ class _MyPageState extends State<MyPage> {
   @override
   void initState() {
     super.initState();
-    _loginUser = widget.loginUser;
+    //_loginUser = widget.loginUser;
     userCollection = FirebaseFirestore.instance
         .collection("member")
         .doc(_loginUser.memberId);
@@ -43,18 +42,18 @@ class _MyPageState extends State<MyPage> {
     });
   }
 
-  void _doChangeImage() async {
-    if (pickedImage != null) {
-      var userIcons = FirebaseStorage.instance
-          .ref()
-          .child('userIcon')
-          .child('${widget.loginUser.memberId}.png');
-      _isChanged = true;
+  // void _doChangeImage() async {
+  //   if (pickedImage != null) {
+  //     var userIcons = FirebaseStorage.instance
+  //         .ref()
+  //         .child('userIcon')
+  //         .child('${widget.loginUser.memberId}.png');
+  //     _isChanged = true;
 
-      await userIcons.putFile(pickedImage!);
-      _loginUser.memberIcon = await userIcons.getDownloadURL();
-    }
-  }
+  //     await userIcons.putFile(pickedImage!);
+  //     _loginUser.memberIcon = await userIcons.getDownloadURL();
+  //   }
+  // }
 
   void _doChangeNickname() async {
     if (_newNickname != '') {
@@ -174,7 +173,7 @@ class _MyPageState extends State<MyPage> {
                           style: TextStyle(color: Colors.white38),
                         ),
                         onPressed: () {
-                          _doChangeImage();
+                          //_doChangeImage();
                           _doChangeNickname();
 
                           if (_isChanged) {

@@ -1,76 +1,55 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'chat_room.dart';
 import 'chat_room_add.dart';
 
-class ChatRoomList extends StatefulWidget {
-  const ChatRoomList({super.key});
+class ChatRoomList extends StatelessWidget {
+  ChatRoomList({super.key});
 
-  @override
-  State<ChatRoomList> createState() => _ChatRoomListState();
-}
-
-class _ChatRoomListState extends State<ChatRoomList> {
-  final _authentication = FirebaseAuth.instance;
-  User? loginUser;
   String? loginUserIcon;
-  List<int> _chatRoomList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getCurrentUser();
-  }
-
-  void getCurrentUser() async {
-    try {
-      final user = _authentication.currentUser;
-      if (user != null) {
-        loginUser = user;
-      }
-    } catch (e) {
-      print(e);
-    }
-    final userIcon = await FirebaseStorage.instance
-        .ref()
-        .child('userIcon')
-        .child(loginUser!.uid + '.png')
-        .getDownloadURL();
-    loginUserIcon = userIcon;
-  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Positioned(
-              top: MediaQuery.of(context).size.height - 200,
-              left: MediaQuery.of(context).size.width - 100,
-              child: FloatingActionButton(
-                onPressed: () {},
-                child: const Icon(Icons.add),
-              ),
-            ),
-            Column(children: [
-              MaterialButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return _chatRoomList.isEmpty
-                        ? const ChatRoomAdd()
-                        : const ChatRoom();
-                  }));
-                },
-                child: _chatRoomList.isEmpty
-                    ? const Text('우측 하단의 + 버튼을 눌러서 채팅을 시작하세요!')
-                    : const Text('chat list'),
-              ),
-            ]),
-          ],
-        ),
+    return Scaffold(
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('chatroom')
+            .orderBy('time', descending: true)
+            .snapshots(),
+        builder: (context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          final chatDocs = snapshot.data!.docs;
+
+          return ListView.builder(
+              //reverse: true,
+              itemCount: chatDocs.length,
+              itemBuilder: (context, index) {
+                return const Card(
+                  margin: EdgeInsets.all(10),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('sds'),
+                  ),
+                );
+              });
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const ChatRoomAdd();
+          }));
+        },
+        label: const Text('모집글 등록하기'),
+        icon: const Icon(Icons.add),
+        backgroundColor: Colors.green[300],
       ),
     );
   }
