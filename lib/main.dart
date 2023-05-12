@@ -1,7 +1,7 @@
 import 'package:come_together2/components/come_together_themes.dart';
 import 'package:come_together2/controller/auth_controller.dart';
-import 'package:come_together2/controller/user_controller.dart';
-import 'package:come_together2/modul/friend_info.dart';
+import 'package:come_together2/model/friend_info.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,6 +22,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   ).then((value) => Get.put(AuthController()));
+
+  await FirebaseAppCheck.instance.activate(
+    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
+  );
 
   runApp(const MyApp());
 }

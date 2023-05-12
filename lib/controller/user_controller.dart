@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import '../modul/friend_info.dart';
-import '../modul/member.dart';
+import '../model/member.dart';
 
 class UserController extends GetxController {
   final loginUser = Member().obs;
@@ -27,34 +26,42 @@ class UserController extends GetxController {
           'memberEmail': user!.email,
           'nickname': user!.displayName,
           'userIcon': 'none',
-          'friends': null
+          'friends': <String>[]
         });
 
         loginUser.value.memberId = user!.uid;
         loginUser.value.memberEmail = user!.email!;
         loginUser.value.memberIcon = 'none';
-        loginUser.value.friends = null;
+        loginUser.value.friends = <String>[];
       }
     }
   }
 
-  void addFriend(FriendInfo friend) {
-    if (loginUser.value.friends == null) {
-      List<FriendInfo> list = [];
-      list.add(friend);
-      loginUser.value.friends = list;
-    } else {
-      loginUser.value.friends!.add(friend);
-    }
-    updateFriends();
+  void addFriends(String friend) {
+    List<String> newFriends = [];
+    newFriends.addAll(loginUser.value.friends);
+    newFriends.add(friend);
+    loginUser.value.friends = newFriends;
   }
 
-  void updateFriends() async {
-    if (user != null) {
-      FirebaseFirestore.instance
-          .collection('member')
-          .doc(user!.uid)
-          .set(loginUser.value.toJson());
-    }
+  void updateFriends() {
+    FirebaseFirestore.instance
+        .collection('member')
+        .doc(loginUser.value.memberId)
+        .update({'friends': loginUser.value.friends});
+  }
+
+  void updateNickname() {
+    FirebaseFirestore.instance
+        .collection('member')
+        .doc(loginUser.value.memberId)
+        .update({'nickname': loginUser.value.memberNickname});
+  }
+
+  void updateUser() {
+    FirebaseFirestore.instance
+        .collection('member')
+        .doc(loginUser.value.memberId)
+        .update(Get.find<UserController>().loginUser.value.toJson());
   }
 }

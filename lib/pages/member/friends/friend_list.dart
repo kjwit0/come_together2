@@ -1,49 +1,68 @@
+import 'package:come_together2/controller/friends_controller.dart';
 import 'package:come_together2/pages/member/friends/add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controller/user_controller.dart';
+import '../../../view/userIcon_view.dart';
 
 class FriendList extends StatelessWidget {
   const FriendList({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
+          const Text('Friend List'),
+          const Divider(),
           Expanded(
-            child: GetX<UserController>(builder: (controller) {
-              return (controller.loginUser.value.friends == null)
+            child: GetX<FriendsContoller>(builder: (controller) {
+              controller.loadFriends(
+                  Get.find<UserController>().loginUser.value.friends);
+              return controller.friends.isEmpty
                   ? const Text(
                       '우측하단의 + 버튼을 눌러서 친구를 추가하세요!',
                       style: TextStyle(fontSize: 18),
                     )
                   : ListView.builder(
-                      itemCount: controller.loginUser.value.friends!.length,
+                      itemCount: controller.friends.length,
                       itemBuilder: (context, index) {
                         return Card(
-                          margin: const EdgeInsets.all(5),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Row(
+                          margin: const EdgeInsets.fromLTRB(30, 5, 30, 0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Icon(
-                                        Icons.account_box,
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: UserIconView(
+                                            url: controller
+                                                .friends[index].memberIcon),
                                       ),
-                                      Text(controller.loginUser.value
-                                          .friends![index].memberNickname),
+                                      Text(
+                                        controller
+                                            .friends[index].memberNickname,
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                       ElevatedButton(
                                         onPressed: () {},
-                                        child: const Text('대화하기'),
+                                        child: const Icon(
+                                          Icons.call,
+                                          color: Colors.black54,
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ]),
-                          ),
+                                ),
+                              ]),
                         );
                       },
                     );
@@ -55,9 +74,9 @@ class FriendList extends StatelessWidget {
         onPressed: () {
           Get.to(() => AddFriend());
         },
-        label: const Text('친구추가하기'),
+        label: const Text('친구추가'),
         icon: const Icon(Icons.add),
-        backgroundColor: Colors.green[300],
+        backgroundColor: Colors.blue[300],
       ),
     );
   }

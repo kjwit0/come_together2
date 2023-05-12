@@ -13,11 +13,9 @@ class CTBottomNavgationBar extends GetView<MainPageContoller> {
           selectedItemColor: context.theme.colorScheme.onBackground,
           unselectedItemColor: context.theme.colorScheme.onSurfaceVariant,
           backgroundColor: Colors.green[300],
-          // Bar에 보여질 요소. icon과 label로 구성.
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: // 선택된 탭은 채워진 아이콘, 나머지는 line 아이콘
-                    Icon(
+                icon: Icon(
                   Icons.group,
                   color: (controller.selectedIndex.value == 0)
                       ? Colors.blue

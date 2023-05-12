@@ -5,9 +5,7 @@ part 'friend_info.g.dart';
 @HiveType(typeId: 1)
 class FriendInfo extends HiveObject {
   FriendInfo(
-      {required this.memberId,
-      required this.memberNickname,
-      required this.memberIcon});
+      {this.memberId = '', this.memberNickname = '', this.memberIcon = ''});
 
   @HiveField(0)
   String memberId;
@@ -17,6 +15,7 @@ class FriendInfo extends HiveObject {
 
   @HiveField(2)
   String memberIcon;
+
   FriendInfo.fromJson(Map<String, dynamic> json)
       : memberId = json['memberId'],
         memberNickname = json['nickname'],

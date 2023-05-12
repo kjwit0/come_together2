@@ -14,7 +14,7 @@ class CometogetherTheme {
     headlineLarge: TextStyle(
       fontSize: 32,
       fontWeight: FontWeight.w500,
-      color: Color.fromARGB(160, 0, 0, 0),
+      color: Colors.white70,
     ),
     headlineMedium: TextStyle(
       fontSize: 26,
