@@ -4,7 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class MessageSend extends StatefulWidget {
-  const MessageSend({super.key});
+  MessageSend({required this.roomId, super.key});
+  String roomId;
 
   @override
   State<MessageSend> createState() => _MessageSendState();
@@ -18,6 +19,7 @@ class _MessageSendState extends State<MessageSend> {
     FocusScope.of(context).unfocus();
     final userId = FirebaseAuth.instance.currentUser;
     FirebaseFirestore.instance.collection('chat').add({
+      'roomId': widget.roomId,
       'text': _userEnterMessage,
       'time': Timestamp.now(),
       'memberId': userId!.uid,

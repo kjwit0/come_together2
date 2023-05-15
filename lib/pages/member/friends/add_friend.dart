@@ -1,8 +1,6 @@
-import 'dart:async';
-
+import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/view/search_member.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../controller/friends_controller.dart';
 
 class AddFriend extends StatelessWidget {
@@ -11,7 +9,6 @@ class AddFriend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(FriendsContoller());
     return Scaffold(
       appBar: AppBar(title: const Text('친구추가하기')),
       body: Column(
@@ -26,13 +23,16 @@ class AddFriend extends StatelessWidget {
                     maxLength: 35,
                     controller: friendSearchController,
                     decoration: InputDecoration(
-                        hintText: '  친구의 이메일을 입력하세요',
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            friendSearchController.clear();
-                          },
-                          icon: const Icon(Icons.clear),
-                        )),
+                      hintText: '  친구의 이메일을 입력하세요',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          friendSearchController.clear();
+                          FriendsContoller.to.clearSearchedFriend();
+                        },
+                        icon: const Icon(Icons.clear),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
               ),
@@ -41,17 +41,18 @@ class AddFriend extends StatelessWidget {
                 child: MaterialButton(
                   color: Colors.green[300],
                   onPressed: () {
-                    Timer(const Duration(milliseconds: 700), () {
-                      Get.find<FriendsContoller>().searchMemberByEmail(
+                    if (ValidateData()
+                        .searchEmailForAdd(friendSearchController.value.text)) {
+                      FriendsContoller.to.searchMemberByEmail(
                           friendSearchController.value.text);
-                    });
+                    }
                   },
                   child: const Icon(Icons.search),
                 ),
               ),
             ],
           ),
-          const FriendListView(),
+          const FriendSearchView(),
         ],
       ),
     );

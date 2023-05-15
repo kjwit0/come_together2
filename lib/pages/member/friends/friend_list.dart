@@ -1,8 +1,8 @@
 import 'package:come_together2/controller/friends_controller.dart';
+import 'package:come_together2/model/notification.dart';
 import 'package:come_together2/pages/member/friends/add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../controller/user_controller.dart';
 import '../../../view/userIcon_view.dart';
 
 class FriendList extends StatelessWidget {
@@ -17,8 +17,6 @@ class FriendList extends StatelessWidget {
           const Divider(),
           Expanded(
             child: GetX<FriendsContoller>(builder: (controller) {
-              controller.loadFriends(
-                  Get.find<UserController>().loginUser.value.friends);
               return controller.friends.isEmpty
                   ? const Text(
                       '우측하단의 + 버튼을 눌러서 친구를 추가하세요!',
@@ -53,7 +51,9 @@ class FriendList extends StatelessWidget {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () => FlutterNotification
+                                            .showNotification(controller
+                                                .friends[index].memberNickname),
                                         child: const Icon(
                                           Icons.call,
                                           color: Colors.black54,

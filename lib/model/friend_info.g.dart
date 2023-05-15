@@ -20,19 +20,22 @@ class FriendInfoAdapter extends TypeAdapter<FriendInfo> {
       memberId: fields[0] as String,
       memberNickname: fields[1] as String,
       memberIcon: fields[2] as String,
+      memberEmail: fields[3] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, FriendInfo obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.memberId)
       ..writeByte(1)
       ..write(obj.memberNickname)
       ..writeByte(2)
-      ..write(obj.memberIcon);
+      ..write(obj.memberIcon)
+      ..writeByte(3)
+      ..write(obj.memberEmail);
   }
 
   @override

@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import '../../controller/user_controller.dart';
 import 'package:get/get.dart';
 
-import '../../view/userIcon_view.dart';
-
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
 
@@ -53,13 +51,11 @@ class MyPage extends StatelessWidget {
                   ComeTogetherButton(
                     text: '유저 아이콘 변경하기',
                     onPressed: () {
-                      Get.find<ImagePickController>()
-                          .uploadImage()
-                          .then((value) {
+                      ImagePickController.to.uploadImage().then((value) {
                         if (value != null) {
                           iconURL = value;
                           isNewIcon = true;
-                          ValidataData().showToast('수정하기를 눌러야 반영됩니다.');
+                          ValidateData().showToast('수정하기를 눌러야 반영됩니다.');
                         }
                       });
                     },
@@ -69,12 +65,12 @@ class MyPage extends StatelessWidget {
               Padding(
                   padding: const EdgeInsets.only(top: 20, bottom: 20),
                   child: Text(
-                      'ID :  ${Get.find<UserController>().loginUser.value.memberEmail}',
+                      'ID :  ${UserController.to.loginUser.value.memberEmail}',
                       style: const TextStyle(fontSize: 20))),
               Padding(
                   padding: const EdgeInsets.only(top: 20, bottom: 20),
                   child: Text(
-                      'Nickname :  ${Get.find<UserController>().loginUser.value.memberNickname}',
+                      'Nickname :  ${UserController.to.loginUser.value.memberNickname}',
                       style: const TextStyle(fontSize: 20))),
               Row(
                 children: [
@@ -86,11 +82,8 @@ class MyPage extends StatelessWidget {
                         hintText: '  새로운 닉네임을 입력하세요',
                       ),
                       onChanged: (value) {
-                        if (ValidataData().changeNickname(
-                            Get.find<UserController>()
-                                .loginUser
-                                .value
-                                .memberNickname,
+                        if (ValidateData().changeNickname(
+                            UserController.to.loginUser.value.memberNickname,
                             value)) {
                           newNickname = value;
                           isNewNickname = true;
@@ -113,7 +106,7 @@ class MyPage extends StatelessWidget {
                     },
                   )),
               Container(
-                padding: const EdgeInsets.all(50),
+                padding: const EdgeInsets.all(30),
                 child: ComeTogetherButton(
                   text: '수정하기',
                   onPressed: () {
@@ -128,10 +121,10 @@ class MyPage extends StatelessWidget {
                       }
 
                       controller.updateUser();
-                      ValidataData().showToast('수정이 완료되었습니다.');
+                      ValidateData().showToast('수정이 완료되었습니다.');
                       Get.off(() => LoginMain());
                     } else {
-                      ValidataData().showToast('변경 사항이 없습니다.');
+                      ValidateData().showToast('변경 사항이 없습니다.');
                     }
                   },
                 ),

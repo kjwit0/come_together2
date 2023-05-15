@@ -1,7 +1,6 @@
 import 'package:come_together2/controller/main_page_contoller.dart';
 import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/view/ct_bottom_navbar.dart';
-import 'package:come_together2/view/userIcon_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/friends_controller.dart';
@@ -16,14 +15,13 @@ class LoginMain extends StatelessWidget {
   List<Widget> pages = <Widget>[
     const FriendList(),
     const ChatRoomList(),
-    const SettingPage(),
+    SettingPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     Get.put(MainPageContoller());
-    Get.put(UserController());
-    Get.put(FriendsContoller());
+    // Get.put(UserController());
 
     return Scaffold(
       appBar: AppBar(
@@ -34,23 +32,30 @@ class LoginMain extends StatelessWidget {
           ),
         ),
         actions: [
-          GetBuilder<UserController>(builder: ((controller) {
-            return Container(
-              margin: const EdgeInsets.only(right: 10),
-              child: GestureDetector(
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: GestureDetector(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 20, 5),
                 child: Row(children: [
-                  UserIconView(url: controller.loginUser.value.memberIcon!),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(controller.loginUser.value.memberNickname),
-                  )
+                  Icon(
+                    Icons.account_box_rounded,
+                    color: Colors.blue[300],
+                  ),
+                  Text(
+                    '  MyPage',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.blue[300],
+                        fontWeight: FontWeight.bold),
+                  ),
                 ]),
-                onTap: () {
-                  Get.to(() => const MyPage());
-                },
               ),
-            );
-          })),
+              onTap: () {
+                Get.to(() => const MyPage());
+              },
+            ),
+          ),
         ],
       ),
       body: Obx(() => SafeArea(

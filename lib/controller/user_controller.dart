@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../model/member.dart';
 
 class UserController extends GetxController {
+  static UserController get to => Get.find();
   final loginUser = Member().obs;
   var user = FirebaseAuth.instance.currentUser;
 
@@ -63,5 +64,17 @@ class UserController extends GetxController {
         .collection('member')
         .doc(loginUser.value.memberId)
         .update(Get.find<UserController>().loginUser.value.toJson());
+  }
+
+  Future<String?> getUserNickname(String userId) async {
+    String? nickname;
+    var info = await FirebaseFirestore.instance
+        .collection('member')
+        .doc(loginUser.value.memberId)
+        .get();
+    if (info.data() != null) {
+      nickname = info.data()!['memberId'];
+    }
+    return nickname;
   }
 }

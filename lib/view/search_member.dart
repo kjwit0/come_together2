@@ -8,8 +8,8 @@ import '../components/come_together_validate.dart';
 import '../controller/friends_controller.dart';
 import '../pages/login_main_page.dart';
 
-class FriendListView extends GetView<FriendsContoller> {
-  const FriendListView({super.key});
+class FriendSearchView extends GetView<FriendsContoller> {
+  const FriendSearchView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +37,16 @@ class FriendListView extends GetView<FriendsContoller> {
                           Text(controller.searchedFriend.value.memberNickname),
                           ElevatedButton(
                             onPressed: () {
-                              Get.find<UserController>().addFriends(
+                              UserController.to.addFriends(
                                   controller.searchedFriend.value.memberId);
 
-                              Get.find<UserController>().updateFriends();
+                              UserController.to.updateFriends();
 
-                              ValidataData().showToast('추가 되었습니다.');
+                              FriendsContoller().addLocalFriend(
+                                  controller.searchedFriend.value);
+
+                              ValidateData().showToast('추가 되었습니다.');
+                              FriendsContoller.to.clearSearchedFriend();
                               Get.off(() => LoginMain());
                             },
                             child: const Text('추가하기'),
