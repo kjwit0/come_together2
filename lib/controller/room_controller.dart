@@ -1,42 +1,26 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:come_together2/components/come_together_validate.dart';
+import 'package:come_together2/controller/date_time_controller.dart';
 import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/model/friend_info.dart';
 import 'package:come_together2/model/room.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import 'friends_controller.dart';
 
 class RoomController extends GetxController {
   static RoomController get to => Get.find();
   final room = Room().obs;
-  final roomMembers = <FriendInfo>[].obs;
-
-  void initRoom(Map<String, dynamic> json) {
-    room.value = Room.fromJson(json);
-  }
-
-  Future<bool> getRoom() async {
-    bool result = false;
-    var chatRoomCollection = FirebaseFirestore.instance.collection("chatRoom");
-    var loadedRoom = await chatRoomCollection
-        .where('joinMember', isEqualTo: RoomController.to.room.value.roomId)
-        .get();
-
-    if (loadedRoom.docs.isNotEmpty) {
-      RoomController.to.room.value = Room.fromJson(loadedRoom.docs[0].data());
-      result = true;
-    }
-    return result;
-  }
+  final roomMembers = <String, FriendInfo>{}.obs;
 
   void createRoom() {
     if (validateCreateRoom()) {
       room.value.createTime = Timestamp.now();
+      room.value.meetDate = DateTimeController.to.date.value;
+      room.value.meetTime = DateTimeController.to.time.value;
+
       RoomController.to.room.value.joinMember
           .add(UserController.to.loginUser.value.memberId);
       FirebaseFirestore.instance
@@ -49,6 +33,11 @@ class RoomController extends GetxController {
             .update({'roomId': doc.id});
       });
     }
+  }
+
+  void loadRoom(String roomId) {
+    bindStream(roomId);
+    loadRoomMembersInfo();
   }
 
   void showDatePickerPop(BuildContext context) async {
@@ -92,10 +81,10 @@ class RoomController extends GetxController {
     if (room.value.roomTitle.length < 2) {
       ValidateData().showToast('모집글의 제목을 2 글자 이상 입력해주세요');
       return false;
-    } else if (room.value.meetDate.isEmpty) {
+    } else if (DateTimeController.to.date.value.isEmpty) {
       ValidateData().showToast('날짜를 입력해주세요');
       return false;
-    } else if (room.value.meetTime.isEmpty) {
+    } else if (DateTimeController.to.time.value.isEmpty) {
       ValidateData().showToast('시간을 입력해주세요');
       return false;
     }
@@ -106,9 +95,64 @@ class RoomController extends GetxController {
     room.value = Room();
   }
 
-  void getRoomMembersInfo() {
+  void loadRoomMembersInfo() {
     FriendsContoller.to.loadFriendsFromFB(room.value.joinMember).then((value) {
       RoomController.to.roomMembers.value = value;
     });
+  }
+
+  void getRoomMemberById(String memberId) {}
+
+  void addRoomMember(String memberId) {
+    room.value.joinMember.add(memberId);
+    FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(room.value.roomId)
+        .update({'joinMember': jsonEncode(room.value.joinMember)});
+  }
+
+  void bindStream(String roomId) {
+    room.bindStream(FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(roomId)
+        .snapshots()
+        .map((DocumentSnapshot<Map<String, dynamic>> query) {
+      return Room.fromJson(query.data()!);
+    }));
+  }
+
+  FriendInfo getFriendInRoom(String memberId) {
+    if (roomMembers.containsKey(memberId)) {
+      return roomMembers[memberId]!;
+    }
+    return FriendInfo(
+        memberId: '',
+        memberEmail: '',
+        memberNickname: '나간 멤버',
+        memberIcon: 'none');
+  }
+
+  void updateRoom(String title) {
+    bool isChanged = false;
+    if (title != '') {
+      room.value.roomTitle = title;
+      isChanged = true;
+    }
+    String date = DateTimeController.to.date.value;
+    if (date != '') {
+      room.value.meetDate = date;
+      isChanged = true;
+    }
+    String time = DateTimeController.to.time.value;
+    if (time != '') {
+      room.value.meetTime = time;
+      isChanged = true;
+    }
+    if (isChanged) {
+      FirebaseFirestore.instance
+          .collection('chatroom')
+          .doc(room.value.roomId)
+          .update(room.value.toJson());
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:come_together2/controller/room_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -36,9 +37,12 @@ class MessageList extends StatelessWidget {
                   return MessageBox(
                       chatData.docs[index]['text'],
                       chatData.docs[index]['memberId'] == loginUser!.uid,
-                      chatData.docs[index]['nickname'],
-                      // chatData.docs[index]['userIcon']
-                      '');
+                      RoomController.to
+                          .getFriendInRoom(chatData.docs[index]['memberId'])
+                          .memberNickname,
+                      RoomController.to
+                          .getFriendInRoom(chatData.docs[index]['memberId'])
+                          .memberIcon);
                 });
       },
     );

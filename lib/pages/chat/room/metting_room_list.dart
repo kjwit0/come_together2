@@ -4,11 +4,11 @@ import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'chat_room.dart';
-import 'chat_room_add.dart';
+import 'metting_room.dart';
+import 'metting_room_add.dart';
 
-class ChatRoomList extends StatelessWidget {
-  const ChatRoomList({super.key});
+class MeetingRoomList extends StatelessWidget {
+  const MeetingRoomList({super.key});
 
   String formatTimestamp(Timestamp timestamp) {
     var format = DateFormat('y-M-d 일 H 시 m 분');
@@ -26,7 +26,6 @@ class ChatRoomList extends StatelessWidget {
             .where('joinMember',
                 isGreaterThanOrEqualTo:
                     Get.find<UserController>().loginUser.value.memberId)
-            .orderBy('joinMember', descending: true)
             .snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -45,8 +44,9 @@ class ChatRoomList extends StatelessWidget {
                       margin: const EdgeInsets.all(5),
                       child: InkWell(
                         onTap: () {
-                          Get.to(() => const ChatRoom(),
-                              arguments: snapshot.data!.docs[index].data());
+                          Get.to(() => const MeetingRoom(),
+                              arguments:
+                                  snapshot.data!.docs[index].data()['roomId']);
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(10),
@@ -71,7 +71,7 @@ class ChatRoomList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Get.to(() => const ChatRoomAdd());
+          Get.to(() => const MeetingRoomAdd());
         },
         label: const Text('모집글 등록'),
         icon: const Icon(Icons.add),

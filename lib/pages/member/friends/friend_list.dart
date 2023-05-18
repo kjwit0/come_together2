@@ -1,5 +1,4 @@
 import 'package:come_together2/controller/friends_controller.dart';
-import 'package:come_together2/model/notification.dart';
 import 'package:come_together2/pages/member/friends/add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -51,9 +50,7 @@ class FriendList extends StatelessWidget {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       ElevatedButton(
-                                        onPressed: () => FlutterNotification
-                                            .showNotification(controller
-                                                .friends[index].memberNickname),
+                                        onPressed: () {},
                                         child: const Icon(
                                           Icons.call,
                                           color: Colors.black54,

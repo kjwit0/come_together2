@@ -1,4 +1,5 @@
 import 'package:come_together2/components/come_together_validate.dart';
+import 'package:come_together2/controller/date_time_controller.dart';
 import 'package:come_together2/controller/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,12 +7,14 @@ import '../../../components/come_together_button.dart';
 import '../../../view/select_date_time.dart';
 import '../../login_main_page.dart';
 
-class ChatRoomAdd extends StatelessWidget {
-  const ChatRoomAdd({super.key});
+class MeetingRoomAdd extends StatelessWidget {
+  const MeetingRoomAdd({super.key});
 
   @override
   Widget build(BuildContext context) {
     Get.put(RoomController());
+    Get.put(DateTimeController());
+
     return Scaffold(
       appBar: AppBar(title: const Text('모집글 등록')),
       body: Center(
@@ -46,6 +49,7 @@ class ChatRoomAdd extends StatelessWidget {
                 RoomController.to.createRoom();
                 ValidateData().showToast('등록 되었습니다');
                 RoomController.to.clearRoomInfo();
+                DateTimeController.to.clearDateTimeInfo();
                 Get.off(() => LoginMain());
               },
             ),

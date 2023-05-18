@@ -1,10 +1,10 @@
-import 'package:come_together2/controller/room_controller.dart';
+import 'package:come_together2/controller/date_time_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../components/come_together_button.dart';
 
-class SelectDateTime extends GetView<RoomController> {
+class SelectDateTime extends GetView<DateTimeController> {
   const SelectDateTime({super.key});
 
   @override
@@ -30,15 +30,15 @@ class SelectDateTime extends GetView<RoomController> {
             Row(
               children: [
                 const SizedBox(width: 50),
-                controller.room.value.meetDate.isEmpty
-                    ? const Text(' ')
-                    : Text('날짜:  ${controller.room.value.meetDate}',
+                controller.date.value.isEmpty
+                    ? const Text('')
+                    : Text('날짜:  ${controller.date.value}',
                         style:
                             const TextStyle(fontSize: 20, color: Colors.white)),
                 const SizedBox(width: 20),
-                controller.room.value.meetTime.isEmpty
+                controller.time.value.isEmpty
                     ? const Text('')
-                    : Text('시간: ${controller.room.value.meetTime}',
+                    : Text('시간: ${controller.time.value}',
                         style: TextStyle(
                             fontSize: 20, color: Colors.amberAccent[100])),
               ],

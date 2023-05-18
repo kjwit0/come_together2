@@ -1,3 +1,4 @@
+import 'package:come_together2/view/userIcon_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 
@@ -66,9 +67,8 @@ class MessageBox extends StatelessWidget {
                   ),
                   Container(
                     padding: const EdgeInsets.only(top: 50, left: 10),
-                    child: CircleAvatar(
-                      backgroundImage:
-                          (_userIcon == '') ? null : NetworkImage(_userIcon),
+                    child: UserIconView(
+                      url: _userIcon,
                     ),
                   ),
                 ],

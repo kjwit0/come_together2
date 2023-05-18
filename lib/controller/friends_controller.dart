@@ -21,37 +21,40 @@ class FriendsContoller extends GetxController {
   }
 
   void synchronizeLocalFriend() async {
-    FriendInfo tempFriend;
-    List<FriendInfo> serverFriends =
+    Map<String, FriendInfo> serverFriends =
         await loadFriendsFromFB(UserController.to.loginUser.value.friends);
 
+    //local 데이터가 서버에 없으면 로컬에서 제거
     for (var key in Hive.box<FriendInfo>('friendsBox').keys) {
-      tempFriend = Hive.box<FriendInfo>('friendsBox').get(key)!;
-
-      //local 데이터가 서버에 없으면 로컬에서 제거
-      if (!serverFriends.contains(tempFriend)) {
+      if (!serverFriends.containsKey(key)) {
         Hive.box<FriendInfo>('friendInfoBox').delete(key);
       }
     }
 
     // 서버의 데이터 local에 추가 및 동기화
-    for (FriendInfo friend in serverFriends) {
-      addLocalFriend(friend);
+    for (String key in serverFriends.keys) {
+      if (!Hive.box<FriendInfo>('friendsBox').containsKey(key)) {
+        addLocalFriend(serverFriends[key]!);
+      }
     }
   }
 
-  Future<List<FriendInfo>> loadFriendsFromFB(List<String> friends) async {
-    List<FriendInfo> tempFriends = [];
+  Future<Map<String, FriendInfo>> loadFriendsFromFB(
+      List<String> friends) async {
+    Map<String, FriendInfo> tempFriends = {};
+
     var memberCollection = FirebaseFirestore.instance.collection("member");
 
     for (var friendId in friends) {
       var userInfo = await memberCollection.doc(friendId).get();
       if (userInfo.exists) {
-        tempFriends.add(FriendInfo(
-            memberId: userInfo.data()!['memberId'],
-            memberNickname: userInfo.data()!['nickname'],
-            memberIcon: userInfo.data()!['userIcon'],
-            memberEmail: userInfo.data()!['memberEmail']));
+        tempFriends = {
+          userInfo.data()!['memberId']: FriendInfo(
+              memberId: userInfo.data()!['memberId'],
+              memberNickname: userInfo.data()!['nickname'],
+              memberIcon: userInfo.data()!['userIcon'],
+              memberEmail: userInfo.data()!['memberEmail'])
+        };
       }
     }
     return tempFriends;
