@@ -1,8 +1,6 @@
 import 'package:come_together2/model/friend_info.dart';
-import 'package:come_together2/model/room.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 
 import '../controller/friends_controller.dart';
 
@@ -37,6 +35,7 @@ class ValidateData {
   }
 
   bool isAddedFriend(String email) {
+    // ignore: invalid_use_of_protected_member
     for (FriendInfo friend in FriendsContoller.to.friends.value) {
       if (friend.memberEmail == email) {
         return true;

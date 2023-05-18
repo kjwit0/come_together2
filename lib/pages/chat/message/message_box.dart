@@ -1,4 +1,4 @@
-import 'package:come_together2/view/userIcon_view.dart';
+import 'package:come_together2/view/user_icon_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 

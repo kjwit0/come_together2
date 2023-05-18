@@ -2,7 +2,7 @@ import 'package:come_together2/controller/friends_controller.dart';
 import 'package:come_together2/pages/member/friends/add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../view/userIcon_view.dart';
+import '../../../view/user_icon_view.dart';
 
 class FriendList extends StatelessWidget {
   const FriendList({super.key});

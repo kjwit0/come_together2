@@ -1,6 +1,6 @@
 import 'package:come_together2/controller/room_controller.dart';
 import 'package:flutter/material.dart';
-import 'userIcon_view.dart';
+import 'user_icon_view.dart';
 
 class RoomMemberList extends StatelessWidget {
   const RoomMemberList({super.key});
