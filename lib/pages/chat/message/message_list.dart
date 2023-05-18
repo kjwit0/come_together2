@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:come_together2/controller/room_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'message_box.dart';
 
+// ignore: must_be_immutable
 class MessageList extends StatelessWidget {
   MessageList({required this.roomId, super.key});
   late String roomId;

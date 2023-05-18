@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class MessageSend extends StatefulWidget {
   MessageSend({required this.roomId, super.key});
   String roomId;
@@ -40,9 +40,7 @@ class _MessageSendState extends State<MessageSend> {
             controller: _textController,
             decoration: const InputDecoration(labelText: '메시지 입력'),
             onChanged: (value) {
-              setState(() {
-                _userEnterMessage = value;
-              });
+              _userEnterMessage = value;
             },
           ),
         ),

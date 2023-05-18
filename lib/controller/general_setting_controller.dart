@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:intl/intl.dart';
 
 import '../model/come_together_config.dart';
 

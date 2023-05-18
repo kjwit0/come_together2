@@ -10,12 +10,12 @@ class DateTimeController extends GetxController {
   void showDatePickerPop(BuildContext context) async {
     Future<DateTime?> selectedDate = showDatePicker(
       context: context,
-      initialDate: DateTime.now(), //초기값
-      firstDate: DateTime.now(), //시작일
-      lastDate: DateTime.now().add(const Duration(days: 60)), //마지막일
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 60)),
       builder: (BuildContext context, Widget? child) {
         return Theme(
-          data: ThemeData.dark(), //다크 테마
+          data: ThemeData.dark(),
           child: child!,
         );
       },

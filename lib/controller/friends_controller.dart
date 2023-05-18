@@ -16,6 +16,7 @@ class FriendsContoller extends GetxController {
   }
 
   void addLocalFriend(FriendInfo friend) {
+    // ignore: invalid_use_of_protected_member
     FriendsContoller.to.friends.value.add(friend);
     Hive.box<FriendInfo>('friendsBox').put(friend.memberId, friend);
   }

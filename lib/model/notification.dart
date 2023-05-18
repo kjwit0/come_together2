@@ -72,7 +72,7 @@ class FlutterNotification {
         title,
         '모임 시간 입니다.',
         time.isBefore(tz.TZDateTime.now(tz.local))
-            ? time.add(Duration(days: 1))
+            ? time.add(const Duration(days: 1))
             : time,
         // 알림일자 세팅
         notificationDetails,

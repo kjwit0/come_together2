@@ -14,6 +14,7 @@ class FadePageRoute extends PageRouteBuilder {
         );
 }
 
+// ignore: must_be_immutable
 class UserInfoInputForm extends StatefulWidget {
   UserInfoInputForm({
     super.key,

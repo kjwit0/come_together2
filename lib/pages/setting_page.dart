@@ -6,15 +6,14 @@ import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatelessWidget {
-  SettingPage({super.key});
+  const SettingPage({super.key});
   // final TextEditingController timeContoller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: Container(
-          child: ListView(
+      child: ListView(
         padding: const EdgeInsets.all(10),
         children: [
           const Text(
@@ -83,7 +82,7 @@ class SettingPage extends StatelessWidget {
             ],
           )
         ],
-      )),
+      ),
     ));
   }
 }
