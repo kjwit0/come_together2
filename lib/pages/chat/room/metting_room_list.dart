@@ -24,8 +24,7 @@ class MeetingRoomList extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection('chatroom')
             .where('joinMember',
-                isGreaterThanOrEqualTo:
-                    Get.find<UserController>().loginUser.value.memberId)
+                arrayContains: UserController.to.loginUser.value.memberId)
             .snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -71,7 +70,7 @@ class MeetingRoomList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Get.to(() => const MeetingRoomAdd());
+          Get.to(() => const MeetingRoomAdd(), arguments: Get.arguments);
         },
         label: const Text('모집글 등록'),
         icon: const Icon(Icons.add),

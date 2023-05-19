@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -17,6 +18,11 @@ class GeneralSettingController extends GetxController {
 
   void setBeforeMiniute(int miniute) {
     GeneralSettingController.to.config.value.beforeMiniute = miniute;
+    GeneralSettingController.to.config.refresh();
+  }
+
+  void updateSyncTime(String time) {
+    GeneralSettingController.to.config.value.lastSyncFriendsTime = time;
     GeneralSettingController.to.config.refresh();
   }
 }

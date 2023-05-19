@@ -20,6 +20,7 @@ class DateTimeController extends GetxController {
         );
       },
     );
+
     DateTime? dateTime = await selectedDate;
 
     if (dateTime != null) {

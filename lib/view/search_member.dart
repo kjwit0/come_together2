@@ -7,7 +7,8 @@ import '../controller/friends_controller.dart';
 import '../pages/login_main_page.dart';
 
 class FriendSearchView extends GetView<FriendsContoller> {
-  const FriendSearchView({super.key});
+  FriendSearchView({required this.friendSearchController, super.key});
+  TextEditingController friendSearchController;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +41,12 @@ class FriendSearchView extends GetView<FriendsContoller> {
 
                               UserController.to.updateFriends();
 
-                              FriendsContoller().addLocalFriend(
+                              FriendsContoller.to.addLocalFriend(
                                   controller.searchedFriend.value);
 
                               ValidateData().showToast('추가 되었습니다.');
                               FriendsContoller.to.clearSearchedFriend();
-                              Get.off(() => LoginMain());
+                              friendSearchController.clear();
                             },
                             child: const Text('추가하기'),
                           ),

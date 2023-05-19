@@ -45,6 +45,23 @@ class UserController extends GetxController {
     loginUser.value.friends = newFriends;
   }
 
+  void deleteFriend(String friend) {
+    loginUser.value.friends.remove(friend);
+    updateFriends();
+  }
+
+  Future<List<String>> loadFirebaseFriends() async {
+    List<String> data = [];
+    var friends = await FirebaseFirestore.instance
+        .collection('member')
+        .doc(loginUser.value.memberId)
+        .get();
+    if (friends.exists) {
+      data = List<String>.from(friends.data()!['friends']);
+    }
+    return data;
+  }
+
   void updateFriends() {
     FirebaseFirestore.instance
         .collection('member')

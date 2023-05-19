@@ -5,15 +5,27 @@ import 'package:come_together2/controller/date_time_controller.dart';
 import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/model/friend_info.dart';
 import 'package:come_together2/model/room.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'friends_controller.dart';
 
 class RoomController extends GetxController {
   static RoomController get to => Get.find();
   final room = Room().obs;
   final roomMembers = <String, FriendInfo>{}.obs;
+
+  bool validateCreateRoom() {
+    if (room.value.roomTitle.length < 2) {
+      ValidateData().showToast('모집글의 제목을 2 글자 이상 입력해주세요');
+      return false;
+    } else if (DateTimeController.to.date.value.isEmpty) {
+      ValidateData().showToast('날짜를 입력해주세요');
+      return false;
+    } else if (DateTimeController.to.time.value.isEmpty) {
+      ValidateData().showToast('시간을 입력해주세요');
+      return false;
+    }
+    return true;
+  }
 
   void createRoom() {
     if (validateCreateRoom()) {
@@ -35,80 +47,8 @@ class RoomController extends GetxController {
     }
   }
 
-  void loadRoom(String roomId) {
-    bindStream(roomId);
-    loadRoomMembersInfo();
-  }
-
-  void showDatePickerPop(BuildContext context) async {
-    Future<DateTime?> selectedDate = showDatePicker(
-      context: context,
-      initialDate: DateTime.now(), //초기값
-      firstDate: DateTime(2020), //시작일
-      lastDate: DateTime.now().add(const Duration(days: 60)), //마지막일
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.dark(), //다크 테마
-          child: child!,
-        );
-      },
-    );
-    DateTime? dateTime = await selectedDate;
-
-    if (dateTime != null) {
-      room.value.meetDate = DateFormat('y-M-d').format(dateTime);
-      room.refresh();
-    }
-  }
-
-  void showTimePickerPop(BuildContext context) async {
-    Future<TimeOfDay?> selectedTime = showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    TimeOfDay? time = await selectedTime;
-
-    if (time != null) {
-      var hour = time.hour.toString().padLeft(2, "0");
-      var min = time.minute.toString().padLeft(2, "0");
-      room.value.meetTime = '$hour:$min';
-      room.refresh();
-    }
-  }
-
-  bool validateCreateRoom() {
-    if (room.value.roomTitle.length < 2) {
-      ValidateData().showToast('모집글의 제목을 2 글자 이상 입력해주세요');
-      return false;
-    } else if (DateTimeController.to.date.value.isEmpty) {
-      ValidateData().showToast('날짜를 입력해주세요');
-      return false;
-    } else if (DateTimeController.to.time.value.isEmpty) {
-      ValidateData().showToast('시간을 입력해주세요');
-      return false;
-    }
-    return true;
-  }
-
   void clearRoomInfo() {
     room.value = Room();
-  }
-
-  void loadRoomMembersInfo() {
-    FriendsContoller.to.loadFriendsFromFB(room.value.joinMember).then((value) {
-      RoomController.to.roomMembers.value = value;
-    });
-  }
-
-  void getRoomMemberById(String memberId) {}
-
-  void addRoomMember(String memberId) {
-    room.value.joinMember.add(memberId);
-    FirebaseFirestore.instance
-        .collection('chatroom')
-        .doc(room.value.roomId)
-        .update({'joinMember': jsonEncode(room.value.joinMember)});
   }
 
   void bindStream(String roomId) {
@@ -119,6 +59,20 @@ class RoomController extends GetxController {
         .map((DocumentSnapshot<Map<String, dynamic>> query) {
       return Room.fromJson(query.data()!);
     }));
+  }
+
+  void loadRoomMembersInfo() {
+    FriendsContoller.to.loadFriendsFromFB(room.value.joinMember).then((value) {
+      RoomController.to.roomMembers.value = value;
+    });
+  }
+
+  void addRoomMember(String memberId) {
+    room.value.joinMember.add(memberId);
+    FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(room.value.roomId)
+        .update({'joinMember': jsonEncode(room.value.joinMember)});
   }
 
   FriendInfo getFriendInRoom(String memberId) {
@@ -149,6 +103,18 @@ class RoomController extends GetxController {
       isChanged = true;
     }
     if (isChanged) {
+      ValidateData().showToast('수정 되었습니다.');
+      room.refresh();
+      FirebaseFirestore.instance
+          .collection('chatroom')
+          .doc(room.value.roomId)
+          .update(room.value.toJson());
+    }
+  }
+
+  void exitRoom() {
+    if (room.value.joinMember
+        .remove(UserController.to.loginUser.value.memberId)) {
       FirebaseFirestore.instance
           .collection('chatroom')
           .doc(room.value.roomId)

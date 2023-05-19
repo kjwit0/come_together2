@@ -16,7 +16,7 @@ import 'pages/first_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNotification.init();
-
+  Get.put(GeneralSettingController());
   //local database
   await Hive.initFlutter();
   Hive.registerAdapter(FriendInfoAdapter());
@@ -31,8 +31,6 @@ void main() async {
   ).then((value) {
     Get.put(AuthController());
   });
-
-  Get.put(GeneralSettingController());
 
   //await Hive.openBox('comeTogetherConfig').then((value){
   // if(value.values[0].isFirstRun == true){

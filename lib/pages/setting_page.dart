@@ -4,6 +4,8 @@ import 'package:come_together2/controller/friends_controller.dart';
 import 'package:come_together2/controller/general_setting_controller.dart';
 import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -21,12 +23,21 @@ class SettingPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Divider(height: 20),
+          GetX<GeneralSettingController>(builder: (controller) {
+            return Container(
+              padding: const EdgeInsets.all(10),
+              alignment: Alignment.topRight,
+              child: Text(
+                '마지막 동기화 시간: ${controller.config.value.lastSyncFriendsTime}',
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+            );
+          }),
           Padding(
             padding: const EdgeInsets.all(10),
             child: ComeTogetherButton(
               onPressed: () {
-                FriendsContoller.to.loadFriendsFromFB(
-                    UserController.to.loginUser.value.friends);
                 FriendsContoller.to.synchronizeLocalFriend();
                 ValidateData().showToast('동기화 되었습니다.');
               },

@@ -44,6 +44,7 @@ class MeetingRoomSetting extends StatelessWidget {
               text: '모집글 수정',
               onPressed: () {
                 RoomController.to.updateRoom(roomTitleController.text);
+                roomTitleController.clear();
               },
             ),
           ]),

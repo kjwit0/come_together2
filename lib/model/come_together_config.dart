@@ -13,4 +13,6 @@ class ComeTogetherConfig extends HiveObject {
 
   @HiveField(2)
   int beforeMiniute;
+
+  String lastSyncFriendsTime = '';
 }

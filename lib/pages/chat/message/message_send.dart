@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -17,15 +17,16 @@ class _MessageSendState extends State<MessageSend> {
 
   void _sendMessage() {
     FocusScope.of(context).unfocus();
-    final userId = FirebaseAuth.instance.currentUser;
     FirebaseFirestore.instance.collection('chat').add({
       'roomId': widget.roomId,
       'text': _userEnterMessage,
       'time': Timestamp.now(),
-      'memberId': userId!.uid,
-      'nickname': userId.displayName
+      'memberId': UserController.to.loginUser.value.memberId,
     });
-    _textController.clear();
+
+    setState(() {
+      _textController.clear();
+    });
   }
 
   @override
@@ -40,14 +41,16 @@ class _MessageSendState extends State<MessageSend> {
             controller: _textController,
             decoration: const InputDecoration(labelText: '메시지 입력'),
             onChanged: (value) {
-              _userEnterMessage = value;
+              setState(() {
+                _userEnterMessage = value;
+              });
             },
           ),
         ),
         IconButton(
           icon: const Icon(Icons.send),
           color: Colors.green[300],
-          onPressed: _userEnterMessage.trim().isEmpty ? null : _sendMessage,
+          onPressed: _textController.text.trim().isEmpty ? null : _sendMessage,
         ),
       ]),
     );

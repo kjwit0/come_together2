@@ -52,7 +52,7 @@ class AddFriend extends StatelessWidget {
               ),
             ],
           ),
-          const FriendSearchView(),
+          FriendSearchView(friendSearchController: friendSearchController),
         ],
       ),
     );

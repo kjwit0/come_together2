@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 
 class MessageBox extends StatelessWidget {
-  const MessageBox(this._message, this._isMe, this._nickname, this._userIcon,
-      {super.key});
+  const MessageBox(
+      {required this.message,
+      required this.isMe,
+      required this.nickname,
+      required this.userIcon,
+      super.key});
 
-  final String _message;
-  final String _nickname;
-  final bool _isMe;
-  final String _userIcon;
+  final String message;
+  final String nickname;
+  final bool isMe;
+  final String userIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +24,9 @@ class MessageBox extends StatelessWidget {
       ),
       child: Row(
           mainAxisAlignment:
-              _isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
+              isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
           children: [
-            if (_isMe)
+            if (isMe)
               ChatBubble(
                 clipper: ChatBubbleClipper4(type: BubbleType.receiverBubble),
                 alignment: Alignment.topRight,
@@ -33,30 +37,29 @@ class MessageBox extends StatelessWidget {
                     maxWidth: MediaQuery.of(context).size.width * 0.7,
                   ),
                   child: Text(
-                    _message,
+                    message,
                     style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
               ),
-            if (!_isMe)
+            if (!isMe)
               Row(
                 children: [
                   Column(
                     children: [
-                      Text(_nickname,
+                      Text(nickname,
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       ChatBubble(
                         clipper:
                             ChatBubbleClipper4(type: BubbleType.sendBubble),
                         alignment: Alignment.topRight,
-                        //margin: const EdgeInsets.only(top: 12),
                         backGroundColor: Colors.indigo,
                         child: Container(
                           constraints: BoxConstraints(
                             maxWidth: MediaQuery.of(context).size.width * 0.7,
                           ),
                           child: Text(
-                            _message,
+                            message,
                             style: const TextStyle(
                                 color: Color.fromARGB(255, 255, 201, 64),
                                 fontSize: 20),
@@ -68,7 +71,7 @@ class MessageBox extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.only(top: 50, left: 10),
                     child: UserIconView(
-                      url: _userIcon,
+                      url: userIcon,
                     ),
                   ),
                 ],

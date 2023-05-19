@@ -20,18 +20,7 @@ class Room {
         meetTime = json['meetTime'],
         meetDate = json['meetDate'],
         createTime = json['createTime'],
-        joinMember = List<String>.from(jsonDecode(json['joinMember']));
-
-  // if (jsonString != null) {
-  //   List<FriendInfo> loadedFriends = [];
-  //   for (var data in jsonDecode(jsonString)) {
-  //     loadedFriends.add(FriendInfo.fromJson(data));
-  //   }
-  //   joinMember = loadedFriends;
-  // } else {
-  //   joinMember = null;
-  // }
-  // }
+        joinMember = List<String>.from(json['joinMember']);
 
   Map<String, dynamic> toJson() => {
         'roomId': roomId,
@@ -39,7 +28,7 @@ class Room {
         'roomTitle': roomTitle,
         'meetTime': meetTime,
         'meetDate': meetDate,
-        'joinMember': jsonEncode(joinMember),
+        'joinMember': joinMember,
         'createTime': createTime
       };
 }
