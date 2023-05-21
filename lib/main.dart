@@ -11,19 +11,32 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'controller/friends_controller.dart';
 import 'firebase_options.dart';
+import 'model/come_together_config.dart';
 import 'pages/first_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNotification.init();
-  Get.put(GeneralSettingController());
+
   //local database
   await Hive.initFlutter();
   Hive.registerAdapter(FriendInfoAdapter());
+  Hive.registerAdapter(ComeTogetherConfigAdapter());
 
   await Hive.openBox<FriendInfo>('friendsBox').then((value) {
     Get.put(FriendsContoller());
   });
+
+  await Hive.openBox<ComeTogetherConfig>('comeTogetherConfig').then((value) {
+    Get.put(GeneralSettingController());
+    if (value.length != 0) {
+      ComeTogetherConfig? temp = value.get('config');
+      GeneralSettingController.to.config.value = temp!;
+    } else {
+      value.put('config', ComeTogetherConfig());
+    }
+  });
+
   // Hive.box<FriendInfo>('friendsBox').deleteFromDisk();
   //firebase 플러그인
   await Firebase.initializeApp(
@@ -31,12 +44,6 @@ void main() async {
   ).then((value) {
     Get.put(AuthController());
   });
-
-  //await Hive.openBox('comeTogetherConfig').then((value){
-  // if(value.values[0].isFirstRun == true){
-  // FriendsContoller.synchronizeLocalFriend();
-  // }
-  //});
 
   await FirebaseAppCheck.instance.activate(
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',

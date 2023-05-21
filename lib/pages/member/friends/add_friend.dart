@@ -1,5 +1,5 @@
 import 'package:come_together2/components/come_together_validate.dart';
-import 'package:come_together2/view/search_member.dart';
+import 'package:come_together2/pages/member/search_member.dart';
 import 'package:flutter/material.dart';
 import '../../../controller/friends_controller.dart';
 

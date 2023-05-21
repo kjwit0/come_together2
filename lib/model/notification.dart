@@ -37,23 +37,8 @@ class FlutterNotification {
         );
   }
 
-  // static Future<void> showNotification(String text) async {
-  //   const AndroidNotificationDetails androidNotificationDetails =
-  //       AndroidNotificationDetails('channel id', 'channel name',
-  //           channelDescription: 'channelDescription',
-  //           importance: Importance.max,
-  //           priority: Priority.max,
-  //           showWhen: false);
-  //   const NotificationDetails notificationDetails = NotificationDetails(
-  //       android: androidNotificationDetails,
-  //       iOS: DarwinNotificationDetails(badgeNumber: 1));
-
-  //   await flutterLocalNotificationsPlugin.show(
-  //       0, 'ComeTogether', text, notificationDetails);
-  // }
-
   static Future<void> showNotificationAtTime(
-      int id, String title, String meetTime) async {
+      int id, String title, String meetDate, String meetTime) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('channel id', 'channel name',
             channelDescription: 'channelDescription',
@@ -65,18 +50,37 @@ class FlutterNotification {
         iOS: DarwinNotificationDetails(badgeNumber: 1));
 
     //받아온 String으로 시간 설정
-    var time = tz.TZDateTime(tz.local, 1, 2, 3, 4, 5, 6);
+    List<String> meetDateSplit = meetDate.split('-');
+    List<String> meetTimeSplit = meetTime.split(':');
+    // 인자 tz.lacal, now.year, now.month, now.day, hour, min, sec
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        '모임 시간 입니다.',
-        time.isBefore(tz.TZDateTime.now(tz.local))
-            ? time.add(const Duration(days: 1))
-            : time,
-        // 알림일자 세팅
-        notificationDetails,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+    var time = tz.TZDateTime(
+        tz.local,
+        int.parse(meetDateSplit[0]),
+        int.parse(meetDateSplit[1]),
+        int.parse(meetDateSplit[2]),
+        int.parse(meetTimeSplit[0]),
+        int.parse(meetTimeSplit[1]),
+        00);
+
+    if (time.isAfter(tz.TZDateTime.now(tz.local))) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+          id,
+          title,
+          '모임 시간 입니다.',
+          time,
+          // 알림일자 세팅
+          notificationDetails,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime);
+    }
+  }
+
+  void deleteNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  void syncNotification() {
+    //todo: server , local notification sync
   }
 }

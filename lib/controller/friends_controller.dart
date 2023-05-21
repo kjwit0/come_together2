@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/controller/general_setting_controller.dart';
@@ -15,12 +14,6 @@ class FriendsContoller extends GetxController {
   final searchedFriend = FriendInfo().obs;
   final friends = <FriendInfo>[].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _syncFriends();
-  }
-
   void loadLocalFriends() {
     FriendsContoller.to.friends.value =
         Hive.box<FriendInfo>('friendsBox').values.toList();
@@ -33,26 +26,23 @@ class FriendsContoller extends GetxController {
     FriendsContoller.to.friends.refresh();
   }
 
-  void _syncFriends() {
+  void syncFriends() {
     GeneralSettingController.to.updateSyncTime(
         DateFormat('yyyy-MM-dd  hh:mm.ss')
             .format(Timestamp.now().toDate())
             .toString());
+    synchronizeLocalFriend();
 
-    print(Timestamp.now());
-    ValidateData().showToast('동기화 되었습니다.');
-    // for cancel variable
-    Timer timer = Timer.periodic(const Duration(seconds: 30), (syncTimer) {
-      synchronizeLocalFriend();
+    // 자동동기화 기능
+    // Timer timer = Timer.periodic(const Duration(seconds: 30), (syncTimer) {
+    //   synchronizeLocalFriend();
 
-      GeneralSettingController.to.updateSyncTime(
-          DateFormat('yyyy-MM-dd  hh:mm.ss')
-              .format(Timestamp.now().toDate())
-              .toString());
-
-      print(Timestamp.now());
-      ValidateData().showToast('동기화 되었습니다.');
-    });
+    //   GeneralSettingController.to.updateSyncTime(
+    //       DateFormat('yyyy-MM-dd  hh:mm.ss')
+    //           .format(Timestamp.now().toDate())
+    //           .toString());
+    //   ValidateData().showToast('동기화 되었습니다.');
+    // });
   }
 
   void synchronizeLocalFriend() async {

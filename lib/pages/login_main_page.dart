@@ -1,3 +1,4 @@
+import 'package:come_together2/controller/friends_controller.dart';
 import 'package:come_together2/controller/main_page_contoller.dart';
 import 'package:come_together2/view/ct_bottom_navbar.dart';
 import 'package:flutter/material.dart';
@@ -15,13 +16,14 @@ class LoginMain extends StatelessWidget {
   List<Widget> pages = <Widget>[
     const FriendList(),
     const MeetingRoomList(),
-    const SettingPage(),
+    SettingPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     Get.put(MainPageContoller());
     Get.put(UserController());
+    FriendsContoller.to.syncFriends();
 
     return Scaffold(
       appBar: AppBar(

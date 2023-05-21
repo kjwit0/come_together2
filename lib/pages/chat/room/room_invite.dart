@@ -4,7 +4,7 @@ import 'package:come_together2/controller/room_controller.dart';
 import 'package:come_together2/pages/member/friends/add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'user_icon_view.dart';
+import '../../../components/come_together_user_icon.dart';
 
 class RoomInvite extends StatelessWidget {
   const RoomInvite({super.key});

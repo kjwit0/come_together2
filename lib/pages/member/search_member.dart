@@ -1,10 +1,9 @@
 import 'package:come_together2/controller/user_controller.dart';
-import 'package:come_together2/view/user_icon_view.dart';
+import 'package:come_together2/components/come_together_user_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../components/come_together_validate.dart';
-import '../controller/friends_controller.dart';
-import '../pages/login_main_page.dart';
+import '../../components/come_together_validate.dart';
+import '../../controller/friends_controller.dart';
 
 class FriendSearchView extends GetView<FriendsContoller> {
   FriendSearchView({required this.friendSearchController, super.key});
