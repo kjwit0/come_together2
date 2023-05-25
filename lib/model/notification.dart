@@ -1,7 +1,11 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+/// 알람 설정 관련 클래스
 class FlutterNotification {
   FlutterNotification._();
 
@@ -37,6 +41,7 @@ class FlutterNotification {
         );
   }
 
+  /// 특정 날짜 및 시간에 알람을 발생
   static Future<void> showNotificationAtTime(
       int id, String title, String meetDate, String meetTime) async {
     const AndroidNotificationDetails androidNotificationDetails =
@@ -49,25 +54,23 @@ class FlutterNotification {
         android: androidNotificationDetails,
         iOS: DarwinNotificationDetails(badgeNumber: 1));
 
-    //받아온 String으로 시간 설정
-    List<String> meetDateSplit = meetDate.split('-');
-    List<String> meetTimeSplit = meetTime.split(':');
-    // 인자 tz.lacal, now.year, now.month, now.day, hour, min, sec
+    //5 분전 알람
+    DateTime meetDateTime = DateFormat("yyyy-MM-dd hh:mm:ss")
+        .parse('$meetDate $meetTime:00')
+        .subtract(const Duration(minutes: 5));
+    print(meetDateTime);
 
-    var time = tz.TZDateTime(
-        tz.local,
-        int.parse(meetDateSplit[0]),
-        int.parse(meetDateSplit[1]),
-        int.parse(meetDateSplit[2]),
-        int.parse(meetTimeSplit[0]),
-        int.parse(meetTimeSplit[1]),
-        00);
+    // 인자 tz.lacal, now.year, now.month, now.day, hour, min, sec
+    tz.initializeTimeZones();
+
+    var time = tz.TZDateTime(tz.local, meetDateTime.year, meetDateTime.month,
+        meetDateTime.day, meetDateTime.hour, meetDateTime.minute, 00);
 
     if (time.isAfter(tz.TZDateTime.now(tz.local))) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
           id,
           title,
-          '모임 시간 입니다.',
+          '곧 모임 시간 입니다.',
           time,
           // 알림일자 세팅
           notificationDetails,
@@ -76,10 +79,12 @@ class FlutterNotification {
     }
   }
 
+  /// 알람 취소
   void deleteNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
   }
 
+  /// 알람을 로컬과 서버 동기화
   void syncNotification() {
     //todo: server , local notification sync
   }

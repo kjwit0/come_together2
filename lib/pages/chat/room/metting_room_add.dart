@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../components/come_together_button.dart';
 import '../../../view/select_date_time.dart';
-import '../../login_main_page.dart';
 
 class MeetingRoomAdd extends StatelessWidget {
   const MeetingRoomAdd({super.key});
@@ -46,11 +45,12 @@ class MeetingRoomAdd extends StatelessWidget {
             ComeTogetherButton(
               text: '모집글 등록',
               onPressed: () {
-                RoomController.to.createRoom();
-                ValidateData().showToast('등록 되었습니다');
-                RoomController.to.clearRoomInfo();
-                DateTimeController.to.clearDateTimeInfo();
-                Get.off(() => LoginMain());
+                if (RoomController.to.createRoom()) {
+                  ValidateData().showToast('등록 되었습니다');
+                  RoomController.to.clearRoomInfo();
+                  DateTimeController.to.clearDateTimeInfo();
+                  Get.back();
+                }
               },
             ),
           ]),

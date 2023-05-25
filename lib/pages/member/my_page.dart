@@ -1,9 +1,7 @@
 import 'package:come_together2/components/come_together_button.dart';
 import 'package:come_together2/components/come_together_validate.dart';
+import 'package:come_together2/controller/auth_controller.dart';
 import 'package:come_together2/controller/image_pick_controller.dart';
-import 'package:come_together2/pages/first_page.dart';
-import 'package:come_together2/pages/login_main_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../controller/user_controller.dart';
 import 'package:get/get.dart';
@@ -101,8 +99,7 @@ class MyPage extends StatelessWidget {
                     text: '로그아웃을 하려면 누르세요',
                     color: Colors.blueGrey,
                     onPressed: () {
-                      FirebaseAuth.instance.signOut();
-                      Get.offAll(() => const FirstPage());
+                      AuthController.to.logout();
                     },
                   )),
               Container(
@@ -122,7 +119,7 @@ class MyPage extends StatelessWidget {
 
                       controller.updateUser();
                       ValidateData().showToast('수정이 완료되었습니다.');
-                      Get.off(() => LoginMain());
+                      Get.back();
                     } else {
                       ValidateData().showToast('변경 사항이 없습니다.');
                     }

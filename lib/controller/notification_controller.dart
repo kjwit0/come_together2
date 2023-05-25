@@ -1,50 +1,35 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import '../model/notification.dart';
 import '../model/room.dart';
 
 class NotificationController {
   NotificationController._();
   static final NotificationController _instance = NotificationController._();
-  static final Map<String, Room> notificationMap = {};
-  int keyNum = -1;
 
   factory NotificationController() {
     return _instance;
   }
 
-  void loadLocalKeyNum() {
-    keyNum = 1;
-  }
-
+  /// 알람 설정 추가
   void addNotification(Room roomInfo) {
-    notificationMap[roomInfo.roomId] = roomInfo;
-    FlutterNotification.showNotificationAtTime(
-        keyNum, roomInfo.roomTitle, roomInfo.meetDate, roomInfo.meetTime);
+    FlutterNotification.showNotificationAtTime(roomInfo.notificationId,
+        roomInfo.roomTitle, roomInfo.meetDate, roomInfo.meetTime);
   }
 
-  void syncNotification(Map<String, String> serverNotificationSchedule) async {
-    cancelAll();
-    FirebaseFirestore.instance
-        .collection('chatroom')
-        .where('joinMember',
-            arrayContains: UserController.to.loginUser.value.memberId)
-        .get()
-        .then((value) {
-      if (value.docs.isNotEmpty) {
-        for (var doc in value.docs) {
-          Room room = Room();
-          room.roomId = doc['roomId'];
-          room.roomTitle = doc['roomTitle'];
-          room.meetDate = doc['meetDate'];
-          room.meetTime = doc['meetTime'];
-          addNotification(room);
-        }
-      }
-    });
+  /// 기존의 알람 설정 수정
+  void updateNotification(Room roomInfo) {
+    cancelAt(roomInfo.notificationId);
+    FlutterNotification.showNotificationAtTime(roomInfo.notificationId,
+        roomInfo.roomTitle, roomInfo.meetDate, roomInfo.meetTime);
   }
 
-  cancelAll() async => await FlutterLocalNotificationsPlugin().cancelAll();
+  /// 기존의 알람 설정을 모두 취소
+  void cancelAll() async {
+    await FlutterLocalNotificationsPlugin().cancelAll();
+  }
+
+  /// 특정 알람 취소
+  void cancelAt(int notificationId) async {
+    await FlutterLocalNotificationsPlugin().cancel(notificationId);
+  }
 }

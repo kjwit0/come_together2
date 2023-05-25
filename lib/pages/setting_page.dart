@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingPage extends StatelessWidget {
-  SettingPage({super.key});
-  final TextEditingController timeContoller = TextEditingController();
-  bool is_changed = false;
+  const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +17,7 @@ class SettingPage extends StatelessWidget {
           FocusScope.of(context).unfocus();
         },
         child: GetX<GeneralSettingController>(builder: (controller) {
+          bool isChanged = false;
           return ListView(
             padding: const EdgeInsets.all(10),
             children: [
@@ -48,112 +47,50 @@ class SettingPage extends StatelessWidget {
                 ),
               ),
               const Divider(height: 20),
-              Container(
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.topRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: const Text(
-                        '알림 설정 켜기 ',
-                        style: TextStyle(fontSize: 20),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: const Text(
+                          '알림 설정 켜기 ',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Switch(
-                        value: controller.config.value.isShowAlarm,
-                        onChanged: (value) {
-                          controller.setShowAlarm(value);
-                          is_changed = true;
-                        },
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Switch(
+                          value: controller.config.value.isShowAlarm,
+                          onChanged: (value) {
+                            controller.setShowAlarm(value);
+                            isChanged = true;
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 20),
-              controller.config.value.isShowAlarm
-                  ? Column(
-                      children: [
-                        Container(
+                    ],
+                  ),
+                  controller.config.value.isShowAlarm
+                      ? Container(
+                          padding: const EdgeInsets.only(right: 20),
                           alignment: Alignment.topRight,
-                          padding: const EdgeInsets.all(10),
                           child: Text(
-                            '모임 ${controller.config.value.beforeMiniute} 분 전 알람',
-                            style: const TextStyle(fontSize: 20),
+                            '모임 5 분 전 알람 표시',
+                            style: TextStyle(
+                                fontSize: 15, color: Colors.blue[400]),
                           ),
-                        ),
-                        Container(
-                          alignment: Alignment.topRight,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: 100,
-                                  child: TextFormField(
-                                    keyboardType: TextInputType.number,
-                                    maxLength: 3,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4.0)),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.blueAccent,
-                                            width: 1.0),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4.0)),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.blueAccent,
-                                            width: 2.0),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4.0)),
-                                      ),
-                                      counterText: '',
-                                    ),
-                                    controller: timeContoller,
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: const Text(
-                                    '분 전',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: ComeTogetherButton(
-                                    onPressed: () {
-                                      is_changed = true;
-                                      controller.setBeforeMiniute(
-                                          int.parse(timeContoller.text));
-                                      FocusScope.of(context).unfocus();
-                                    },
-                                    text: '알람 시간 설정',
-                                    color: Colors.blue[600],
-                                  ),
-                                ),
-                              ]),
-                        ),
-                      ],
-                    )
-                  : Container(),
+                        )
+                      : const SizedBox(height: 22),
+                ],
+              ),
               const Divider(height: 20),
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: ComeTogetherButton(
                   onPressed: () {
-                    if (is_changed = true) {
+                    if (isChanged == true) {
                       controller.saveLocalSetting();
                       ValidateData().showToast('수정 되었습니다.');
                     }

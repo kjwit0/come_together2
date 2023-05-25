@@ -1,3 +1,4 @@
+import 'package:come_together2/controller/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -6,32 +7,31 @@ import '../model/member.dart';
 class UserController extends GetxController {
   static UserController get to => Get.find();
   final loginUser = Member().obs;
-  var user = FirebaseAuth.instance.currentUser;
 
   @override
   void onInit() {
+    fetchData(FirebaseAuth.instance.currentUser);
     super.onInit();
-    _fetchData();
   }
 
-  void _fetchData() async {
+  void fetchData(User? user) async {
     if (user != null) {
       var memberCollection = FirebaseFirestore.instance.collection("member");
-      var userInfo = await memberCollection.doc(user!.uid).get();
+      var userInfo = await memberCollection.doc(user.uid).get();
 
       if (userInfo.exists) {
         loginUser.value = Member.fromJson(userInfo.data()!);
       } else {
-        memberCollection.doc(user!.uid).set({
-          'memberId': user!.uid,
-          'memberEmail': user!.email,
-          'nickname': user!.displayName,
+        memberCollection.doc(user.uid).set({
+          'memberId': user.uid,
+          'memberEmail': user.email,
+          'nickname': user.displayName,
           'userIcon': 'none',
           'friends': <String>[]
         });
 
-        loginUser.value.memberId = user!.uid;
-        loginUser.value.memberEmail = user!.email!;
+        loginUser.value.memberId = AuthController.to.user.value!.uid;
+        loginUser.value.memberEmail = AuthController.to.user.value!.email!;
         loginUser.value.memberIcon = 'none';
         loginUser.value.friends = <String>[];
       }
@@ -52,13 +52,16 @@ class UserController extends GetxController {
 
   Future<List<String>> loadFirebaseFriends() async {
     List<String> data = [];
-    var friends = await FirebaseFirestore.instance
-        .collection('member')
-        .doc(loginUser.value.memberId)
-        .get();
-    if (friends.exists) {
-      data = List<String>.from(friends.data()!['friends']);
+    if (loginUser.value.memberId != '') {
+      var friends = await FirebaseFirestore.instance
+          .collection('member')
+          .doc(loginUser.value.memberId)
+          .get();
+      if (friends.exists) {
+        data = List<String>.from(friends.data()!['friends']);
+      }
     }
+
     return data;
   }
 

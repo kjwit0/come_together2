@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../components/come_together_validate.dart';
 import '../../controller/friends_controller.dart';
 
+// ignore: must_be_immutable
 class FriendSearchView extends GetView<FriendsContoller> {
   FriendSearchView({required this.friendSearchController, super.key});
   TextEditingController friendSearchController;
@@ -46,6 +47,7 @@ class FriendSearchView extends GetView<FriendsContoller> {
                               ValidateData().showToast('추가 되었습니다.');
                               FriendsContoller.to.clearSearchedFriend();
                               friendSearchController.clear();
+                              Get.back();
                             },
                             child: const Text('추가하기'),
                           ),

@@ -8,7 +8,7 @@ part of 'come_together_config.dart';
 
 class ComeTogetherConfigAdapter extends TypeAdapter<ComeTogetherConfig> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
   ComeTogetherConfig read(BinaryReader reader) {
@@ -21,16 +21,13 @@ class ComeTogetherConfigAdapter extends TypeAdapter<ComeTogetherConfig> {
       isFirstRun: fields[1] as bool,
       beforeMiniute: fields[2] as int,
       isShowAlarm: fields[3] as bool,
-      notificationKeyNum: fields[5] as int,
-    )
-      ..notificationMap = (fields[4] as Map).cast<String, String>()
-      ..lastSyncFriendsTime = fields[6] as String;
+    )..lastSyncFriendsTime = fields[4] as String;
   }
 
   @override
   void write(BinaryWriter writer, ComeTogetherConfig obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.isDarkMode)
       ..writeByte(1)
@@ -40,10 +37,6 @@ class ComeTogetherConfigAdapter extends TypeAdapter<ComeTogetherConfig> {
       ..writeByte(3)
       ..write(obj.isShowAlarm)
       ..writeByte(4)
-      ..write(obj.notificationMap)
-      ..writeByte(5)
-      ..write(obj.notificationKeyNum)
-      ..writeByte(6)
       ..write(obj.lastSyncFriendsTime);
   }
 

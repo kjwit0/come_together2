@@ -7,6 +7,7 @@ class DateTimeController extends GetxController {
   final Rx<String> date = RxString('');
   final Rx<String> time = RxString('');
 
+  /// 날짜 선택 위젯
   void showDatePickerPop(BuildContext context) async {
     Future<DateTime?> selectedDate = showDatePicker(
       context: context,
@@ -28,6 +29,7 @@ class DateTimeController extends GetxController {
     }
   }
 
+  /// 시간 선택 위젯
   void showTimePickerPop(BuildContext context) async {
     Future<TimeOfDay?> selectedTime = showTimePicker(
       context: context,
@@ -43,6 +45,7 @@ class DateTimeController extends GetxController {
     }
   }
 
+  /// 시간 및 날짜 설정 정보를 초기화
   void clearDateTimeInfo() {
     time.value = '';
     date.value = '';

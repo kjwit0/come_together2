@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:come_together2/controller/room_controller.dart';
+import 'package:come_together2/controller/room_list_controller.dart';
 import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'message_box.dart';
@@ -7,7 +7,7 @@ import 'message_box.dart';
 // ignore: must_be_immutable
 class MessageList extends StatelessWidget {
   MessageList({required this.roomId, super.key});
-  late String roomId;
+  String roomId;
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +37,14 @@ class MessageList extends StatelessWidget {
                   itemCount: chatData.docs.length,
                   itemBuilder: (context, index) {
                     return MessageBox(
-                      nickname: RoomController.to
-                          .getFriendInRoom(chatData.docs[index]['memberId'])
+                      nickname: RoomListController
+                          .to
+                          .friendsMap[chatData.docs[index]['memberId']]!
                           .memberNickname,
                       message: chatData.docs[index]['text'],
-                      userIcon: RoomController.to
-                          .getFriendInRoom(chatData.docs[index]['memberId'])
+                      userIcon: RoomListController
+                          .to
+                          .friendsMap[chatData.docs[index]['memberId']]!
                           .memberIcon,
                       isMe: chatData.docs[index]['memberId'] ==
                           UserController.to.loginUser.value.memberId,

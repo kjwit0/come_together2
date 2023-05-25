@@ -1,13 +1,15 @@
 import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/controller/friends_controller.dart';
-import 'package:come_together2/controller/room_controller.dart';
+import 'package:come_together2/controller/room_list_controller.dart';
 import 'package:come_together2/pages/member/friends/add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../components/come_together_user_icon.dart';
 
+// ignore: must_be_immutable
 class RoomInvite extends StatelessWidget {
-  const RoomInvite({super.key});
+  RoomInvite({required this.roomId, super.key});
+  String roomId;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,8 @@ class RoomInvite extends StatelessWidget {
                                         ),
                                         ElevatedButton(
                                           onPressed: () {
-                                            RoomController.to.addRoomMember(
+                                            RoomListController.to.addRoomMember(
+                                                roomId,
                                                 controller
                                                     .friends[index].memberId);
                                             ValidateData()

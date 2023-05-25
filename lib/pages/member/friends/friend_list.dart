@@ -3,12 +3,14 @@ import 'package:come_together2/pages/member/friends/add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../components/come_together_user_icon.dart';
+import '../../../components/friend_delete_button.dart';
 
 class FriendList extends StatelessWidget {
   const FriendList({super.key});
 
   @override
   Widget build(BuildContext context) {
+    FriendsContoller.to.syncFriends();
     return Scaffold(
       body: Column(
         children: [
@@ -64,69 +66,9 @@ class FriendList extends StatelessWidget {
                                           Padding(
                                               padding:
                                                   const EdgeInsets.all(5.0),
-                                              child: ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.red),
-                                                  onPressed: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        barrierDismissible:
-                                                            true, // 바깥 영역 터치시 닫을지 여부
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                              content: Text(
-                                                                '${controller.friends[index].memberNickname} 님을 친구에서 제거합니다.',
-                                                              ),
-                                                              insetPadding:
-                                                                  const EdgeInsets
-                                                                          .fromLTRB(
-                                                                      0,
-                                                                      80,
-                                                                      0,
-                                                                      80),
-                                                              actions: [
-                                                                TextButton(
-                                                                    child:
-                                                                        const Text(
-                                                                      '제거',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.red),
-                                                                    ),
-                                                                    onPressed:
-                                                                        () {
-                                                                      controller
-                                                                          .deleteFriend(
-                                                                              controller.friends[index]);
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                    }),
-                                                                TextButton(
-                                                                    child:
-                                                                        const Text(
-                                                                      '취소',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.blue),
-                                                                    ),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                    }),
-                                                              ]);
-                                                        });
-                                                  },
-                                                  child: const Icon(
-                                                    Icons
-                                                        .person_remove_outlined,
-                                                    color: Colors.black54,
-                                                  ))),
+                                              child: FriendDeleteButton(
+                                                  friendInfo: controller
+                                                      .friends[index])),
                                         ]),
                                       ],
                                     ),

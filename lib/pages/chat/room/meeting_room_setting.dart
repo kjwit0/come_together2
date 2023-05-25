@@ -1,15 +1,19 @@
 import 'package:come_together2/controller/date_time_controller.dart';
 import 'package:come_together2/controller/room_controller.dart';
+import 'package:come_together2/controller/room_list_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../components/come_together_button.dart';
 import '../../../view/select_date_time.dart';
 
+// ignore: must_be_immutable
 class MeetingRoomSetting extends StatelessWidget {
   const MeetingRoomSetting({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(RoomController()).room.value =
+        RoomListController.to.roomMap[Get.arguments]!;
     Get.put(DateTimeController());
     TextEditingController roomTitleController = TextEditingController();
 
@@ -45,6 +49,7 @@ class MeetingRoomSetting extends StatelessWidget {
               onPressed: () {
                 RoomController.to.updateRoom(roomTitleController.text);
                 roomTitleController.clear();
+                Get.back();
               },
             ),
           ]),
