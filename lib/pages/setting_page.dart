@@ -2,6 +2,7 @@ import 'package:come_together2/components/come_together_button.dart';
 import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/controller/friends_controller.dart';
 import 'package:come_together2/controller/general_setting_controller.dart';
+import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,7 +18,6 @@ class SettingPage extends StatelessWidget {
           FocusScope.of(context).unfocus();
         },
         child: GetX<GeneralSettingController>(builder: (controller) {
-          bool isChanged = false;
           return ListView(
             padding: const EdgeInsets.all(10),
             children: [
@@ -38,11 +38,13 @@ class SettingPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: ComeTogetherButton(
-                  onPressed: () {
-                    FriendsContoller.to.syncFriends();
-                    ValidateData().showToast('동기화 되었습니다.');
-                  },
-                  text: '친구 동기화',
+                  onPressed: UserController.to.isLogin()
+                      ? () {
+                          FriendsContoller.to.syncFriends();
+                          ValidateData().showSnackBar('친구 동기화', '동기화 되었습니다.');
+                        }
+                      : null,
+                  text: UserController.to.isLogin() ? '친구 동기화' : 'offline Mode',
                   color: Colors.blue[600],
                 ),
               ),
@@ -65,7 +67,6 @@ class SettingPage extends StatelessWidget {
                           value: controller.config.value.isShowAlarm,
                           onChanged: (value) {
                             controller.setShowAlarm(value);
-                            isChanged = true;
                           },
                         ),
                       ),
@@ -90,10 +91,7 @@ class SettingPage extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: ComeTogetherButton(
                   onPressed: () {
-                    if (isChanged == true) {
-                      controller.saveLocalSetting();
-                      ValidateData().showToast('수정 되었습니다.');
-                    }
+                    controller.saveLocalSetting();
                   },
                   text: '설정 저장',
                   color: Colors.deepPurple[400],

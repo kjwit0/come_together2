@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:come_together2/controller/room_list_controller.dart';
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
+import '../../../controller/user_controller.dart';
 import 'message_box.dart';
 
 // ignore: must_be_immutable

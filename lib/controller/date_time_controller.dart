@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+/// 날짜 시간 관리 컨트롤러
 class DateTimeController extends GetxController {
   static DateTimeController get to => Get.find();
   final Rx<String> date = RxString('');

@@ -1,9 +1,9 @@
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/components/come_together_user_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../components/come_together_validate.dart';
 import '../../controller/friends_controller.dart';
+import '../../controller/user_controller.dart';
 
 // ignore: must_be_immutable
 class FriendSearchView extends GetView<FriendsContoller> {
@@ -39,12 +39,10 @@ class FriendSearchView extends GetView<FriendsContoller> {
                               UserController.to.addFriends(
                                   controller.searchedFriend.value.memberId);
 
-                              UserController.to.updateFriends();
-
                               FriendsContoller.to.addLocalFriend(
                                   controller.searchedFriend.value);
 
-                              ValidateData().showToast('추가 되었습니다.');
+                              ValidateData().showToast('친구 추가 되었습니다.');
                               FriendsContoller.to.clearSearchedFriend();
                               friendSearchController.clear();
                               Get.back();

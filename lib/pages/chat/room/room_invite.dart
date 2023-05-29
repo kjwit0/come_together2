@@ -1,4 +1,3 @@
-import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/controller/friends_controller.dart';
 import 'package:come_together2/controller/room_list_controller.dart';
 import 'package:come_together2/pages/member/friends/add_friend.dart';
@@ -59,10 +58,7 @@ class RoomInvite extends StatelessWidget {
                                           onPressed: () {
                                             RoomListController.to.addRoomMember(
                                                 roomId,
-                                                controller
-                                                    .friends[index].memberId);
-                                            ValidateData()
-                                                .showToast('초대 되었습니다.');
+                                                controller.friends[index]);
                                             Get.back();
                                           },
                                           child: const Icon(

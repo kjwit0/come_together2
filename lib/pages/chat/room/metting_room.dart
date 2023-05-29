@@ -1,10 +1,10 @@
 import 'package:come_together2/components/come_together_button.dart';
 import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/controller/room_list_controller.dart';
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/pages/chat/room/room_invite.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../controller/user_controller.dart';
 import '../../../model/room.dart';
 import 'room_member_list.dart';
 import '../../login_main_page.dart';
@@ -58,7 +58,7 @@ class MeetingRoom extends StatelessWidget {
                 ),
               ),
               const Divider(),
-              const RoomMemberList(),
+              RoomMemberList(memberList: controller.friendsMap),
               const SizedBox(height: 20),
               ComeTogetherButton(
                 onPressed: () {
@@ -73,7 +73,7 @@ class MeetingRoom extends StatelessWidget {
               ComeTogetherButton(
                 onPressed: () {
                   controller.exitRoom(roomInfo.roomId);
-                  ValidateData().showToast('퇴장 하였습니다.');
+                  ValidateData().showSnackBar('방 나가기', '퇴장 하였습니다.');
                   Get.offAll(() => LoginMain());
                 },
                 text: '방에서 나가기',

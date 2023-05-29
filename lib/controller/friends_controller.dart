@@ -2,41 +2,42 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/controller/general_setting_controller.dart';
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/model/friend_info.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+
+import 'user_controller.dart';
 
 /// 친구 관련 모듈 관리
 class FriendsContoller extends GetxController {
   static FriendsContoller get to => Get.find();
-
   final searchedFriend = FriendInfo().obs;
   final friends = <FriendInfo>[].obs;
+  final friendsBox = Hive.box<FriendInfo>('friendsBox');
 
   /// 로컬의 저장된 친구 정보 로드
-  void loadLocalFriends() {
-    FriendsContoller.to.friends.value =
-        Hive.box<FriendInfo>('friendsBox').values.toList();
-  }
+  void loadLocalFriends() =>
+      FriendsContoller.to.friends.value = friendsBox.values.toList();
 
   /// 로컬에 친구 정보 저장
   void addLocalFriend(FriendInfo friend) {
     FriendsContoller.to.friends.add(friend);
-    Hive.box<FriendInfo>('friendsBox').put(friend.memberId, friend);
+    friendsBox.put(friend.memberId, friend);
     FriendsContoller.to.friends.refresh();
   }
 
   /// 서버의 친구 정보와 로컬의 정보를 동기화
   void syncFriends() {
-    GeneralSettingController.to.updateSyncTime(
-        DateFormat('yyyy-MM-dd  hh:mm.ss')
-            .format(Timestamp.now().toDate())
-            .toString());
+    if (UserController.to.isLogin()) {
+      GeneralSettingController.to.updateSyncTime(
+          DateFormat('yyyy-MM-dd  hh:mm.ss')
+              .format(Timestamp.now().toDate())
+              .toString());
 
-    _synchronizeLocalFriend();
-
+      _synchronizeLocalFriend();
+    }
     // 자동동기화 기능
     // Timer timer = Timer.periodic(const Duration(seconds: 30), (syncTimer) {
     //   synchronizeLocalFriend();
@@ -53,9 +54,9 @@ class FriendsContoller extends GetxController {
     List<String> serverFriends = await UserController.to.loadFirebaseFriends();
 
     //local 데이터가 서버에 없으면 로컬에서 제거
-    for (var key in Hive.box<FriendInfo>('friendsBox').keys) {
+    for (var key in friendsBox.keys) {
       if (!serverFriends.contains(key)) {
-        Hive.box<FriendInfo>('friendsBox').delete(key);
+        friendsBox.delete(key);
         List<FriendInfo> friends = FriendsContoller.to.friends;
 
         for (var i = 0; i < friends.length; i++) {
@@ -67,13 +68,22 @@ class FriendsContoller extends GetxController {
 
     // 서버의 데이터 local에 추가 및 동기화
     for (String id in serverFriends) {
-      if (!Hive.box<FriendInfo>('friendsBox').containsKey(id)) {
-        loadFriendFromFB(id).then((value) {
-          if (value != null) {
-            addLocalFriend(value);
-          }
-        });
-      }
+      friendsBox.containsKey(id)
+          ? putFriendToLocal(id, updateLocalFriend)
+          : putFriendToLocal(id, addLocalFriend);
+    }
+    friends.refresh();
+  }
+
+  void putFriendToLocal(String id, Function function) =>
+      loadFriendFromFB(id).then((value) {
+        (value == null) ? null : function(value);
+      });
+
+  void updateLocalFriend(FriendInfo friend) {
+    friendsBox.put(friend.memberId, friend);
+    for (var i = 0; i < friends.length; i++) {
+      (friends[i].memberId == friend.memberId) ? (friends[i] = friend) : null;
     }
   }
 
@@ -91,7 +101,7 @@ class FriendsContoller extends GetxController {
             memberEmail: tempFriend.data()!['memberEmail']);
       }
     } on FirebaseException catch (e) {
-      print(e);
+      Logger().e(e);
     }
     return null;
   }
@@ -105,19 +115,19 @@ class FriendsContoller extends GetxController {
 
       for (var friendId in friends) {
         var userInfo = await memberCollection.doc(friendId).get();
+
         if (userInfo.exists) {
-          tempFriends = {
-            userInfo.data()!['memberId']: FriendInfo(
-                memberId: userInfo.data()!['memberId'],
-                memberNickname: userInfo.data()!['nickname'],
-                memberIcon: userInfo.data()!['userIcon'],
-                memberEmail: userInfo.data()!['memberEmail'])
-          };
+          tempFriends[friendId] = FriendInfo(
+              memberId: userInfo.data()!['memberId'],
+              memberNickname: userInfo.data()!['nickname'],
+              memberIcon: userInfo.data()!['userIcon'],
+              memberEmail: userInfo.data()!['memberEmail']);
         }
       }
     } on FirebaseException catch (e) {
-      print(e);
+      Logger().e(e);
     }
+
     return tempFriends;
   }
 
@@ -137,7 +147,7 @@ class FriendsContoller extends GetxController {
             memberEmail: searchResult.docs[0].get('memberEmail'));
       }
     } on FirebaseException catch (e) {
-      print(e);
+      Logger().e(e);
     }
   }
 
@@ -148,10 +158,10 @@ class FriendsContoller extends GetxController {
 
   /// 해당하는 친구의 정보를 서버에서 제거
   void deleteFriend(FriendInfo friend) {
-    Hive.box<FriendInfo>('friendsBox').delete(friend.memberId);
+    friendsBox.delete(friend.memberId);
     UserController.to.deleteFriend(friend.memberId);
     friends.remove(friend);
-    ValidateData().showToast('삭제 되었습니다.');
+    ValidateData().showSnackBar('친구삭제', '삭제 되었습니다.');
     friends.refresh();
   }
 }

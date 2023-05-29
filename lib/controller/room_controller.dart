@@ -1,13 +1,16 @@
+// ignore_for_file: prefer_function_declarations_over_variables
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:come_together2/components/come_together_validate.dart';
 import 'package:come_together2/controller/date_time_controller.dart';
 import 'package:come_together2/controller/room_list_controller.dart';
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:come_together2/model/friend_info.dart';
 import 'package:come_together2/model/room.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'notification_controller.dart';
+import 'user_controller.dart';
 
 /// 방을 생성하거나 변경할 때, 임시로 사용하는 컨트롤러
 class RoomController extends GetxController {
@@ -31,16 +34,16 @@ class RoomController extends GetxController {
   /// 컨트롤러에 있는 방 정보가 생성 가능한 상태인지 판별
   bool _validateCreateRoom() {
     if (room.value.roomTitle.length < 2) {
-      ValidateData().showToast('모집글의 제목을 2 글자 이상 입력해주세요');
+      ValidateData().showSnackBar('모집글 제목 설정', '모집글의 제목을 2 글자 이상 입력해주세요');
       return false;
     } else if (DateTimeController.to.date.value.isEmpty) {
-      ValidateData().showToast('날짜를 입력해주세요');
+      ValidateData().showSnackBar('날짜 설정', '날짜를 입력해주세요');
       return false;
     } else if (DateTimeController.to.time.value.isEmpty) {
-      ValidateData().showToast('시간을 입력해주세요');
+      ValidateData().showSnackBar('시간 설정', '시간을 입력해주세요');
       return false;
     } else if (_isBeforeTime()) {
-      ValidateData().showToast('약속시간은 10분 후 부터 가능합니다.');
+      ValidateData().showSnackBar('시간 설정', '약속시간은 10분 후 부터 가능합니다.');
       return false;
     }
 
@@ -71,7 +74,7 @@ class RoomController extends GetxController {
         return true;
       }
     } on FirebaseException catch (e) {
-      print(e);
+      Logger().e(e);
     }
 
     return false;
@@ -116,7 +119,7 @@ class RoomController extends GetxController {
     }
     if (isTimeChanged) {
       if (_isBeforeTime()) {
-        ValidateData().showToast('약속시간은 10분 후 부터 가능합니다.');
+        ValidateData().showSnackBar('시간 설정', '약속시간은 10분 후 부터 가능합니다.');
         return;
       }
 
@@ -131,7 +134,7 @@ class RoomController extends GetxController {
             .doc(room.value.roomId)
             .update(room.value.toJson());
       } on FirebaseException catch (e) {
-        print(e);
+        Logger().e(e);
       }
     }
   }

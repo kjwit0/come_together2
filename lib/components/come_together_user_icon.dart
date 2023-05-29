@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // ignore: must_be_immutable
 class UserIconView extends StatelessWidget {
@@ -9,24 +10,27 @@ class UserIconView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.only(left: 10),
+        margin: const EdgeInsets.all(1),
         height: 40,
         width: 40,
         decoration: BoxDecoration(
-          color: Colors.black,
           borderRadius: BorderRadius.circular(20),
-          image: url == 'none'
-              ? const DecorationImage(
-                  image: AssetImage(
-                    'lib/images/play-button.png',
-                  ),
-                  fit: BoxFit.fill)
-              : DecorationImage(
-                  image: NetworkImage(
-                    url,
-                  ),
-                  fit: BoxFit.fill),
         ),
+        child: (url != 'none')
+            ? CachedNetworkImage(
+                imageUrl: url,
+                placeholder: (context, url) =>
+                    Image.asset('lib/images/loading.gif'),
+                fit: BoxFit.fill,
+                errorWidget: (context, url, error) => Image.asset(
+                  'lib/images/play-button.png',
+                  fit: BoxFit.fill,
+                ),
+              )
+            : Image.asset(
+                'lib/images/play-button.png',
+                fit: BoxFit.fill,
+              ),
       ),
     );
   }

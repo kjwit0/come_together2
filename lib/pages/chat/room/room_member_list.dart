@@ -1,14 +1,14 @@
-import 'package:come_together2/controller/room_list_controller.dart';
 import 'package:flutter/material.dart';
 import '../../../components/come_together_user_icon.dart';
 import '../../../model/friend_info.dart';
 
+// ignore: must_be_immutable
 class RoomMemberList extends StatelessWidget {
-  const RoomMemberList({super.key});
+  RoomMemberList({required this.memberList, super.key});
+  Map<String, FriendInfo> memberList;
 
   @override
   Widget build(BuildContext context) {
-    Map<String, FriendInfo> memberList = RoomListController.to.friendsMap;
     return (memberList.isEmpty)
         ? const Text('data loading')
         : SizedBox(

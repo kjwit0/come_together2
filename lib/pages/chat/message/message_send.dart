@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
+
+import '../../../controller/user_controller.dart';
 
 // ignore: must_be_immutable
 class MessageSend extends StatefulWidget {

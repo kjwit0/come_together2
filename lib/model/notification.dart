@@ -58,7 +58,6 @@ class FlutterNotification {
     DateTime meetDateTime = DateFormat("yyyy-MM-dd hh:mm:ss")
         .parse('$meetDate $meetTime:00')
         .subtract(const Duration(minutes: 5));
-    print(meetDateTime);
 
     // 인자 tz.lacal, now.year, now.month, now.day, hour, min, sec
     tz.initializeTimeZones();

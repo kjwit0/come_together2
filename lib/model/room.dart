@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:come_together2/controller/user_controller.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../controller/user_controller.dart';
 
 part 'room.g.dart';
 

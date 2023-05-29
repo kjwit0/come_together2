@@ -1,5 +1,5 @@
 import 'package:come_together2/components/come_together_colors.dart';
-import 'package:come_together2/controller/auth_controller.dart';
+import 'package:come_together2/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -33,7 +33,7 @@ class FirstPage extends StatelessWidget {
                 const Text('Login with'),
                 TextButton.icon(
                   onPressed: () async {
-                    await AuthController.to.signInWithGoogle();
+                    await UserController.to.signInWithGoogle();
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: CometogetherColors.textPrimaryColor,

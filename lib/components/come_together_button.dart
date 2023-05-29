@@ -6,7 +6,7 @@ class ComeTogetherButton extends StatelessWidget {
   final String? text;
   final Color? color;
   final double? height;
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {

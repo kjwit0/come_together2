@@ -6,14 +6,17 @@ class NotificationController {
   NotificationController._();
   static final NotificationController _instance = NotificationController._();
 
-  factory NotificationController() {
-    return _instance;
-  }
+  factory NotificationController() => _instance;
 
   /// 알람 설정 추가
-  void addNotification(Room roomInfo) {
-    FlutterNotification.showNotificationAtTime(roomInfo.notificationId,
-        roomInfo.roomTitle, roomInfo.meetDate, roomInfo.meetTime);
+  void addNotification(Room roomInfo) =>
+      FlutterNotification.showNotificationAtTime(roomInfo.notificationId,
+          roomInfo.roomTitle, roomInfo.meetDate, roomInfo.meetTime);
+
+  void addAllNotification(Map<String, Room> rooms) {
+    for (var roomKey in rooms.keys) {
+      addNotification(rooms[roomKey]!);
+    }
   }
 
   /// 기존의 알람 설정 수정
@@ -24,12 +27,9 @@ class NotificationController {
   }
 
   /// 기존의 알람 설정을 모두 취소
-  void cancelAll() async {
-    await FlutterLocalNotificationsPlugin().cancelAll();
-  }
+  void cancelAll() async => await FlutterLocalNotificationsPlugin().cancelAll();
 
   /// 특정 알람 취소
-  void cancelAt(int notificationId) async {
-    await FlutterLocalNotificationsPlugin().cancel(notificationId);
-  }
+  void cancelAt(int notificationId) async =>
+      await FlutterLocalNotificationsPlugin().cancel(notificationId);
 }

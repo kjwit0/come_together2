@@ -14,6 +14,7 @@ class ImagePickController extends GetxController {
   Future<String?> _pickImage() async {
     var image = await ImagePickController.to.imagePicker.value.pickImage(
         source: ImageSource.gallery, imageQuality: 50, maxHeight: 150);
+
     if (image != null) {
       return image.path;
     }
